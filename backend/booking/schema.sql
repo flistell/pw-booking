@@ -59,12 +59,12 @@ INSERT INTO catalog (item_type, item_owner_id, item_location_id, item_details) V
 ('car', 1, 2, '{ "brand": "Tesla", "model": "Model 3", "year": 2022, "horsepower": 150, "emission": 0, "min_age": 21, "reg_id": "KL890MN" }');
 
 
-DROP TABLE IF EXISTS booking_status;
-CREATE TABLE booking_status (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    status TEXT UNIQUE NOT NULL,
-    description TEXT
-) ;
+-- DROP TABLE IF EXISTS booking_status;
+-- CREATE TABLE booking_status (
+--     id INTEGER PRIMARY KEY AUTOINCREMENT,
+--     status TEXT UNIQUE NOT NULL,
+--     description TEXT
+-- ) ;
 
 DROP TABLE IF EXISTS location;
 CREATE TABLE location (
@@ -100,12 +100,11 @@ CREATE TABLE booking (
     created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     user_id INTEGER NOT NULL,
     booked_item_id INTEGER NOT NULL,
-    booking_start TIMESTAMP NOT NULL,
-    booking_end TIMESTAMP NOT NULL,
-    booking_status_id INTEGER NOT NULL,
+    booking_start DATETIME NOT NULL,
+    booking_end DATETIME NOT NULL,
+    booking_status TEXT NOT NULL,
     delivery_address_id INTEGER NOT NULL,
     FOREIGN KEY (user_id) REFERENCES userprofile (id),
     FOREIGN KEY (booked_item_id) REFERENCES catalog (id),
-    FOREIGN KEY (booking_status_id) REFERENCES booking_status (id),
     FOREIGN KEY (delivery_address_id) REFERENCES location (id)
 );

@@ -4,6 +4,7 @@ import logging
 import pprint
 import uuid
 from . import _dict_factory
+import datetime
 
 logger = logging.getLogger("Model")
 logger.setLevel(logging.DEBUG)
@@ -14,6 +15,7 @@ class Resource():
     _tablename = 'dual'
 
     def __init__(self):
+        logger.debug(type(self).__name__ + ".__init__")
         self._db = db.get_db()
         self._db.row_factory = _dict_factory
 
@@ -24,6 +26,7 @@ class Resource():
         pass
 
     def get_all(self):
+        logger.debug(type(self).__name__ + ".get_all();")
         rows = self._db.execute(
             f"SELECT * FROM {self._tablename}"
         ).fetchall()
@@ -77,13 +80,33 @@ class Booking(Resource):
     _tablename = "booking"
     
     def put(self, **kwargs):
-        self._id = uuid.uuid5()
-    
-    def get(self, id):
-        user_row = self._db.execute(
-            'SELECT * FROM userprofile u WHERE u.username = ?', (username,)
-        ).fetchone()
+        #  TODO: check if car is booked in the same time frame
+        sql_booking_conflict = f'''
+        select * from booking 
+        where 
+            booked_item_id = {kwargs['booked_item_id']} and (
+                booking_start <= '{kwargs['booking_end']}' 
+                or booking_end >= '{kwargs['booking_start']}'
+            )
+        '''
+        logger.debug(f"sql_booking_conflict: '{sql_booking_conflict}'")
+        cur = self._db.execute(sql_booking_conflict)
+        count = cur.fetchone()
+        logger.debug(f"count: '{cur.rowcount}'")
         
-
-     
-    pass
+        if count:
+            logger.warning(f"Specified data is already booked: " + pprint.pformat(count))
+            raise ValueError(f"Invalid booking range. Resource {kwargs['booked_item_id']} already booked.")
+        
+        sql_insert = f'''
+        INSERT INTO {self._tablename}
+            (user_id, booked_item_id, booking_start, booking_end, booking_status, delivery_address_id)
+        VALUES
+            (:user_id, :booked_item_id, :booking_start, :booking_end, :booking_status, :delivery_address_id)
+        '''
+        logger.debug(f"sql_insert: '{sql_insert}'")
+        cur = self._db.execute(sql_insert, kwargs)
+        self._db.commit()
+        cur.close()
+        logger.debug(f"insert new row with id: '{cur.lastrowid}'")
+        return cur.lastrowid
