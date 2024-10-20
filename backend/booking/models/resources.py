@@ -2,9 +2,9 @@ from booking import db
 from . import register
 import logging
 import pprint
-import uuid
 from . import _dict_factory
 import datetime
+import json
 
 logger = logging.getLogger("Model")
 logger.setLevel(logging.DEBUG)
@@ -110,3 +110,19 @@ class Booking(Resource):
         cur.close()
         logger.debug(f"insert new row with id: '{cur.lastrowid}'")
         return cur.lastrowid
+
+@register
+class Item(Resource):
+    _tablename = "catalog"
+   
+    def get_all(self) :
+        # sovrascrive il metodo get_all di default per riformattare item_details
+        # qui c'è una doppia conversione:
+        # - in tabella item_details è un JSON
+        # - viene letto dal rowfactory come string
+        # - qui lo convertiamo da stringa json a dict
+        # - la view flask lo ri-converte in JSON con jsonify()
+        rows = super().get_all()
+        for row in rows:
+            row['item_details'] = json.loads(row['item_details'] )
+        return rows 

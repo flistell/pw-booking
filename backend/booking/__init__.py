@@ -1,5 +1,6 @@
 import os
 from flask import Flask
+from flask_cors import CORS
 import logging
 
 logger = logging.getLogger(__name__)
@@ -25,9 +26,16 @@ def create_app(test_config=None):
     except OSError:
         pass
 
+    cors = CORS(app, resources={
+        r"/resources/*": {"origins": "*"},
+        r"/catalog/*": {"origins": "*"},
+        r"/ping/*": {"origins": "*"},
+        })
+    
     @app.route('/ping')
     def ping():
-        return 'pong.'
+        return 'pong!'
+
 
     from . import db
     db.init_app(app)

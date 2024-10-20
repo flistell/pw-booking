@@ -8,7 +8,6 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
 
-
 def features(key=None):
     _db = db.get_db()
     _db.row_factory = _dict_factory
@@ -19,6 +18,7 @@ def features(key=None):
         resultset = _db.execute(f"SELECT * FROM CATALOG c, json_each(item_details, '$.{key})'").fetchall()
     logger.debug(resultset)
     return resultset
+
 
 def search(**kwargs):
     _db = db.get_db()
