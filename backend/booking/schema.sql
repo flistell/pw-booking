@@ -38,7 +38,7 @@ INSERT INTO owner (user_id) VALUES
 DROP TABLE IF EXISTS catalog;
 CREATE TABLE catalog (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    item_type TEXT UNIQUE NOT NULL,
+    item_type TEXT NOT NULL,
     item_owner_id INTEGER NOT NULL, 
     item_location_id INTEGER NOT NULL,
     item_details TEXT NOT NULL,
@@ -46,17 +46,17 @@ CREATE TABLE catalog (
     FOREIGN KEY (item_location_id) REFERENCES location (id)
 );
 INSERT INTO catalog (item_type, item_owner_id, item_location_id, item_details) VALUES
-('car', 1, 2, '{ "brand": "Fiat", "model": "Panda", "year": 2020, "horsepower": 51, "emission": 95, "min_age": 18, "reg_id": "AB123CD" }'),
-('car', 1, 2, '{ "brand": "Fiat", "model": "Punto", "year": 2018, "horsepower": 64, "emission": 95, "min_age": 18, "reg_id": "AB124CD" }'),
-('car', 1, 2, '{ "brand": "Volkswagen", "model": "Golf", "year": 2019, "horsepower": 85, "emission": 110, "min_age": 18, "reg_id": "EF456GH" }'),
-('car', 1, 2, '{ "brand": "Toyota", "model": "Yaris", "year": 2021, "horsepower": 67, "emission": 89, "min_age": 18, "reg_id": "IJ789KL" }'),
-('car', 1, 2, '{ "brand": "Ford", "model": "Focus", "year": 2018, "horsepower": 92, "emission": 115, "min_age": 18, "reg_id": "MN012OP" }'),
-('car', 1, 2, '{ "brand": "Renault", "model": "Clio", "year": 2020, "horsepower": 65, "emission": 97, "min_age": 18, "reg_id": "QR345ST" }'),
-('car', 1, 2, '{ "brand": "BMW", "model": "Series 3", "year": 2017, "horsepower": 110, "emission": 125, "min_age": 21, "reg_id": "UV678WX" }'),
-('car', 1, 2, '{ "brand": "Mercedes", "model": "C-Class", "year": 2019, "horsepower": 120, "emission": 130, "min_age": 21, "reg_id": "YZ901AB" }'),
-('car', 1, 2, '{ "brand": "Audi", "model": "A3", "year": 2021, "horsepower": 100, "emission": 105, "min_age": 18, "reg_id": "CD234EF" }'),
-('car', 1, 2, '{ "brand": "Peugeot", "model": "208", "year": 2020, "horsepower": 75, "emission": 98, "min_age": 18, "reg_id": "GH567IJ" }'),
-('car', 1, 2, '{ "brand": "Tesla", "model": "Model 3", "year": 2022, "horsepower": 150, "emission": 0, "min_age": 21, "reg_id": "KL890MN" }');
+('car', 1, 2, '{ "brand": "Fiat", "model": "Panda", "year": 2020, "horsepower": 51, "emission": 95, "min_age": 18, "reg_id": "AB123CD", "photo": "car00000.jpg"}'),
+('car', 1, 2, '{ "brand": "Fiat", "model": "Punto", "year": 2018, "horsepower": 64, "emission": 95, "min_age": 18, "reg_id": "AB124CD", "photo": "car00000.jpg" }'),
+('car', 1, 2, '{ "brand": "Volkswagen", "model": "Golf", "year": 2019, "horsepower": 85, "emission": 110, "min_age": 18, "reg_id": "EF456GH", "photo": "car00000.jpg" }'),
+('car', 1, 2, '{ "brand": "Toyota", "model": "Yaris", "year": 2021, "horsepower": 67, "emission": 89, "min_age": 18, "reg_id": "IJ789KL", "photo": "car00000.jpg" }'),
+('car', 1, 2, '{ "brand": "Ford", "model": "Focus", "year": 2018, "horsepower": 92, "emission": 115, "min_age": 18, "reg_id": "MN012OP", "photo": "car00000.jpg" }'),
+('car', 1, 2, '{ "brand": "Renault", "model": "Clio", "year": 2020, "horsepower": 65, "emission": 97, "min_age": 18, "reg_id": "QR345ST", "photo": "car00000.jpg" }'),
+('car', 1, 2, '{ "brand": "BMW", "model": "Series 3", "year": 2017, "horsepower": 110, "emission": 125, "min_age": 21, "reg_id": "UV678WX", "photo": "car00000.jpg" }'),
+('car', 1, 2, '{ "brand": "Mercedes", "model": "C-Class", "year": 2019, "horsepower": 120, "emission": 130, "min_age": 21, "reg_id": "YZ901AB", "photo": "car00000.jpg" }'),
+('car', 1, 2, '{ "brand": "Audi", "model": "A3", "year": 2021, "horsepower": 100, "emission": 105, "min_age": 18, "reg_id": "CD234EF", "photo": "car00000.jpg" }'),
+('car', 1, 2, '{ "brand": "Peugeot", "model": "208", "year": 2020, "horsepower": 75, "emission": 98, "min_age": 18, "reg_id": "GH567IJ", "photo": "car00000.jpg" }'),
+('car', 1, 2, '{ "brand": "Tesla", "model": "Model 3", "year": 2022, "horsepower": 150, "emission": 0, "min_age": 21, "reg_id": "KL890MN", "photo": "car00000.jpg" }');
 
 
 -- DROP TABLE IF EXISTS booking_status;

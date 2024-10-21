@@ -1,6 +1,8 @@
 # Booking app
 
 
+
+
 ## Resources
 
 - How to Connect a React Frontend to a Flask Backend
@@ -10,3 +12,4 @@
 - https://tms-dev-blog.com/python-backend-with-javascript-frontend-how-to/
 - https://blog.appseed.us/flask-react-full-stack-seed-projects/
 
+- [REST API Tutorial](https://restfulapi.net/resource-naming/)
