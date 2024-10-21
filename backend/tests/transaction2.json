@@ -1,0 +1,8 @@
+{
+"user_id": 2, 
+"booked_item_id": 5,
+"booking_start": "2024-10-25 10:00:00",
+"booking_end": "2024-10-29 00:00:00", 
+"booking_status": 1, 
+"delivery_address_id": 2
+}
