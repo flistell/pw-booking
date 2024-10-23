@@ -136,7 +136,8 @@ class Items(CollectionBase):
         return obj
     
     def get_all(self):
-        return self._jsonify(super().get_all())
+        query = f"select * FROM catalog c INNER JOIN location l on c.item_location_id = l.id ORDER BY l.city"
+        return self._jsonify(super().get_all(query))
     
     def filter(self, **kwargs):
         logger.debug("args: " + pprint.pformat(kwargs))

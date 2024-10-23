@@ -1,29 +1,19 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-// import HelloWorld from './components/HelloWorld.vue'
+import Navbar from '@/components/Navbar.vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
 </script>
 
 <template>
-  <RouterView />
+  <div id="app" class="app">
+    <div class="container">
+      <Navbar/>
+      <RouterView />
+    </div>
+  </div>
 </template>
 
-
-<!-- <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
-</template> -->
 
 <style scoped>
 #app {

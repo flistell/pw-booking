@@ -47,11 +47,11 @@ class CollectionBase():
         logger.debug("kwds: " + repr(kwds))
         pass
 
-    def get_all(self):
+    def get_all(self, query=None):
         logger.debug(type(self).__name__ + ".get_all();")
-        rows = self._db.execute(
-            f"SELECT * FROM {self._tablename}"
-        ).fetchall()
+        if not query:
+            query = f"SELECT * FROM {self._tablename}"
+        rows = self._db.execute(query).fetchall()
         return rows
 
     def get(self, value):
