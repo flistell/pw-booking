@@ -23,7 +23,7 @@
                             <td>{{ item.item_details.brand }}</td>
                             <td>{{ item.item_details.model }}</td>
                             <td>{{ item.item_details.horsepower }}</td>
-                            <td>{{ item.item_details.emission }}</td>
+                            > <td>{{ item.item_details.emission }}</td>
                             <td>{{ item.item_details.photo }}</td>
                             <td>
                                 <span v-if="item.booked">No</span>

@@ -1,3 +1,9 @@
+<script setup>
+import axios from 'axios';
+import Datepicker from 'vue3-datepicker'
+import { ref } from 'vue'
+</script>
+
 <template>
     <div>
         <div class="row align-items-start">
@@ -5,7 +11,7 @@
             <div class="col-lg-8 mb-3 mb-lg-0">
                 <div class="card shadow">
                     <h1 class="mb-3">{{ item.item_details.brand }} {{ item.item_details.model }}</h1>
-                    <img class="img-thumbnail item-card-image" :src="`public/static/images/${item.item_details.photo}`">
+                    <img class="img-thumbnail item-card-image" :src="`/public/static/images/${ item.item_details.photo }`">
                     <hr>
 
                     <!-- Location -->
@@ -66,7 +72,7 @@
                             </div>
                             <hr>
 
-                            <datepicker v-model="selected" :locale="locale" :upperLimit="to" :lowerLimit="from"
+                            <Datepicker v-model="selected" :locale="locale" :upperLimit="to" :lowerLimit="from"
                                 :clearable="true" />
 
                             <div class="d-flex justify-content-between">
@@ -93,12 +99,13 @@ export default {
         };
     },
     methods: {
-        getItem() {
-            const path = 'http://localhost:5000/resources/item/${id}'
+        getItem(id) {
+            console.log("getItem(" + id + ")")
+            const path = 'http://localhost:5000/resources/items/' + id;
             axios.get(path)
 
                 .then((res) => {
-                    this.items = res.data;
+                    this.item = res.data;
                     console.log(res.data);
                 })
                 .catch((error) => {
@@ -107,7 +114,8 @@ export default {
         },
     },
     created() {
-        this.getItems();
+        const itemId = this.$route.params.id;
+        this.getItem(itemId);
     }
 }
 </script>

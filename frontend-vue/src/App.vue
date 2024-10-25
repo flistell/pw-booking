@@ -1,14 +1,13 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import Navbar from '@/components/Navbar.vue'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 </script>
 
 <template>
   <div id="app" class="app">
     <div class="container">
-      <Navbar/>
+      <!-- <Navbar/> -->
       <RouterView />
     </div>
   </div>
