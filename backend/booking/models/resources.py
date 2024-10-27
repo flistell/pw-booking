@@ -86,7 +86,8 @@ class Item(ResourceBase):
     _pkey = 'id'
     _tablename = 'catalog'
     _extra_operations = [ 'is_available' ]
-
+    _query = f"select * FROM catalog c INNER JOIN location l on c.item_location_id = l.id ORDER BY l.city"
+    
     def is_available(self, **kwargs):
         query = '''
         SELECT id AS booking_id
@@ -110,6 +111,7 @@ class Item(ResourceBase):
         # - la view flask lo ri-converte in JSON con jsonify()
         data['item_details'] = json.loads(data['item_details'])
         return data
+
 
 @collection
 class Items(CollectionBase):

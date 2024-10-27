@@ -83,6 +83,7 @@ class ResourceBase():
     _extra_operations = []
     _collection = CollectionBase
     _id = None
+    _query = "SELECT * FROM {self._tablename} WHERE {self._pkey} = {value}"
     
     def __init__(self, id=None, data=dict()):
         logger.debug(type(self).__name__ + ".__init__")
@@ -95,7 +96,7 @@ class ResourceBase():
             raise ValueError(
                 "'id' and 'data' argument cannot be used together.")
         if id and not data:
-            data = self._from_table(id)
+            data = self._from_table(id, self._query)
             self._data = self._format(data)
             self._id = self._data[self._pkey]
         if data and not id:
@@ -105,8 +106,7 @@ class ResourceBase():
     def _format(self, data):
         return data        
 
-    def _from_table(self, value):
-        query = f"SELECT * FROM {self._tablename} WHERE {self._pkey} = {value}"
+    def _from_table(self, value, query=None):
         logger.debug(f"query = '{query}'")
         resultset = self._db.execute(query).fetchone()
         logger.debug("resultset: " + pprint.pformat(resultset))

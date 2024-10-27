@@ -11,7 +11,7 @@ CREATE TABLE userprofile (
 );
 
 INSERT INTO userprofile (username, password, common_name, family_name, mail_address, tax_id, payment_method) VALUES
-('mrossi', 'password01', 'Mario', 'Rossi', 'mario.rossi@example.com', 'ABC12345678', 'payplal'),
+('mrossi', 'password01', 'Mario', 'Rossi', 'mario.rossi@example.com', 'ABC12345678', 'paypal'),
 ('lbianchi', 'password02', 'Luigi', 'Bianchi', 'luigi.bianchi@example.com', 'DEF23456789', 'paypal'),
 ('averdi', 'password03', 'Anna', 'Verdi', 'anna.verdi@example.com', 'GHI34567890', 'paypal'),
 ('sneri', 'password04', 'Sara', 'Neri', 'sara.neri@example.com', 'JKL45678901', 'paypal'),
