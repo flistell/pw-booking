@@ -10,8 +10,17 @@ const props = defineProps({
     <div id="item_card_small" class="card">
         <div>
             <h2 class="card-title">{{ brand }} {{ model }}</h2>
-            <img class="img-thumbnail item-card-image" :src="`/public/static/images/${photo}`">
+            <img class="img-thumbnail rounded item-card-image" :src="`/public/static/images/${photo}`">
         </div>
 
     </div><!-- bw_item_card-->
 </template>
+
+<style scoped>
+.img-thumbnail {
+    border-color: white;
+    border-width: 3px;
+    border-radius: 10px !important;
+    padding: 0;
+}
+</style>

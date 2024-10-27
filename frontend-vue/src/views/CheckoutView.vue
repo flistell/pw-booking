@@ -1,0 +1,3 @@
+<template>
+    CheckoutView
+</template>

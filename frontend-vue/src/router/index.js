@@ -4,6 +4,7 @@ import Items from '../components/Items.vue'
 import Item from '../components/Item.vue'
 import HomeView from '../views/HomeView.vue'
 import BookingWizard from '@/views/BookingWizard.vue'
+import CheckoutView from '@/views/CheckoutView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,6 +28,11 @@ const router = createRouter({
       path: '/ping',
       name: 'ping',
       component: Ping
+    },
+    {
+      path: '/checkout',
+      name: 'CheckoutView',
+      component: CheckoutView
     },
     {
       path: '/book' ,

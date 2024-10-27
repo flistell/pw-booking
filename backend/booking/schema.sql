@@ -7,7 +7,7 @@ CREATE TABLE userprofile (
     family_name TEXT NOT NULL,
     mail_address UNIQUE NOT NULL,
     tax_id TEXT UNIQUE NOT NULL,
-    payment_method TEX
+    payment_method TEXT
 );
 
 INSERT INTO userprofile (username, password, common_name, family_name, mail_address, tax_id, payment_method) VALUES
@@ -48,38 +48,61 @@ CREATE TABLE catalog (
 );
 INSERT INTO catalog (item_type, item_owner_id, item_location_id, item_price_weight, item_details) VALUES
 ('car', 1, 1, 90,
-    '{ "brand": "Fiat", "model": "Panda", "year": 2020, "horsepower": 51, "emission": 95, "min_age": 18, "reg_id": "AB123CD", "photo": "39962524-83c1-46d6-846e-a3f520f96ce0.webp",
-        "description": "Lorem ipsum odor amet, consectetuer adipiscing elit. Pretium vitae justo aptent nunc adipiscing suspendisse augue rhoncus ullamcorper. Finibus molestie eget accumsan libero lacus in eu. Ac placerat aliquet urna, urna lacinia fusce. Sociosqu imperdiet conubia imperdiet; lacinia integer ultricies. Pulvinar congue aptent non elit gravida volutpat dis ullamcorper. Magnis praesent imperdiet tincidunt lorem mollis tellus ipsum curae."}'),
+    '{ 
+        "brand": "Fiat", "model": "Panda", "year": 2020, "horsepower": 51, "emission": 95, "min_age": 18, "reg_id": "AB123CD", "photo": "39962524-83c1-46d6-846e-a3f520f96ce0.webp","fuel_consumption": 5.2,
+        "description": "Lorem ipsum odor amet, consectetuer adipiscing elit. Pretium vitae justo aptent nunc adipiscing suspendisse augue rhoncus ullamcorper. Finibus molestie eget accumsan libero lacus in eu. Ac placerat aliquet urna, urna lacinia fusce. Sociosqu imperdiet conubia imperdiet; lacinia integer ultricies. Pulvinar congue aptent non elit gravida volutpat dis ullamcorper. Magnis praesent imperdiet tincidunt lorem mollis tellus ipsum curae."
+    }'),
 ('car', 1, 2, 90, 
-    '{ "brand": "Fiat", "model": "Punto", "year": 2018, "horsepower": 64, "emission": 95, "min_age": 18, "reg_id": "AB124CD", "photo": "931199af-d6ec-43a5-864c-76d76ca15443.webp",
-        "description": "Nisl eleifend nunc in, luctus non efficitur. Justo sodales litora iaculis orci; et quam id. Suspendisse ultricies consectetur lacus vehicula consequat in ligula convallis. Suscipit risus conubia pretium magna; libero dapibus. Magna quisque ridiculus himenaeos euismod, at sapien tellus posuere. Inceptos hendrerit vivamus libero at vestibulum cursus laoreet dictumst. Vulputate duis libero efficitur sit sed euismod nullam. Etiam nec class cubilia aenean per nisl faucibus luctus." }'),
+    '{ 
+        "brand": "Fiat", "model": "Punto", "year": 2018, "horsepower": 64, "emission": 95, "min_age": 18, "reg_id": "AB124CD", "photo": "931199af-d6ec-43a5-864c-76d76ca15443.webp",
+        "description": "Nisl eleifend nunc in, luctus non efficitur. Justo sodales litora iaculis orci; et quam id. Suspendisse ultricies consectetur lacus vehicula consequat in ligula convallis. Suscipit risus conubia pretium magna; libero dapibus. Magna quisque ridiculus himenaeos euismod, at sapien tellus posuere. Inceptos hendrerit vivamus libero at vestibulum cursus laoreet dictumst. Vulputate duis libero efficitur sit sed euismod nullam. Etiam nec class cubilia aenean per nisl faucibus luctus.", 
+        "fuel_consumption": 6.1
+    }'),
 ('car', 2, 4, 110, 
     '{ "brand": "Volkswagen", "model": "Golf", "year": 2019, "horsepower": 85, "emission": 110, "min_age": 18, "reg_id": "EF456GH", "photo": "9144947d-46bd-4178-8ee6-1d83e4944697.webp",
-        "description": "Varius augue placerat integer mollis a malesuada, dictumst tortor amet. Nunc ex cursus dolor purus netus turpis pharetra nisi. Scelerisque suscipit nisi iaculis neque sapien morbi. Suspendisse ullamcorper lobortis lobortis tempor fermentum fames vestibulum. Mollis phasellus aliquet etiam velit malesuada condimentum per. Tincidunt sodales amet in feugiat erat molestie parturient taciti. Molestie fringilla imperdiet libero nibh ornare. Tincidunt id et augue nunc scelerisque rutrum." }'),
+        "description": "Varius augue placerat integer mollis a malesuada, dictumst tortor amet. Nunc ex cursus dolor purus netus turpis pharetra nisi. Scelerisque suscipit nisi iaculis neque sapien morbi. Suspendisse ullamcorper lobortis lobortis tempor fermentum fames vestibulum. Mollis phasellus aliquet etiam velit malesuada condimentum per. Tincidunt sodales amet in feugiat erat molestie parturient taciti. Molestie fringilla imperdiet libero nibh ornare. Tincidunt id et augue nunc scelerisque rutrum.",
+        "fuel_consumption": 6.1
+    }'),
 ('car', 3, 5, 80,
     '{ "brand": "Toyota", "model": "Yaris", "year": 2021, "horsepower": 67, "emission": 89, "min_age": 18, "reg_id": "IJ789KL", "photo": "07f8b186-951e-41b1-9c18-7a6f7406ebea.webp", 
-        "description": "Pellentesque molestie eleifend nisl sollicitudin gravida sollicitudin eleifend faucibus faucibus. Interdum est tristique lorem; nec vehicula erat fames. Pellentesque accumsan elementum duis taciti scelerisque integer erat ad etiam! Nam est augue fames sed nostra integer leo per praesent. Tempus lacinia per proin inceptos semper tempor. Dapibus efficitur efficitur lectus ut; quisque nascetur lectus vehicula. Purus venenatis at tempus posuere ipsum convallis. Amet maximus volutpat cursus ornare neque aliquam luctus mauris. Posuere amet dui duis maximus vestibulum primis." }'),
+        "description": "Pellentesque molestie eleifend nisl sollicitudin gravida sollicitudin eleifend faucibus faucibus. Interdum est tristique lorem; nec vehicula erat fames. Pellentesque accumsan elementum duis taciti scelerisque integer erat ad etiam! Nam est augue fames sed nostra integer leo per praesent. Tempus lacinia per proin inceptos semper tempor. Dapibus efficitur efficitur lectus ut; quisque nascetur lectus vehicula. Purus venenatis at tempus posuere ipsum convallis. Amet maximus volutpat cursus ornare neque aliquam luctus mauris. Posuere amet dui duis maximus vestibulum primis.",
+        "fuel_consumption": 4.8 
+    }'),
 ('car', 3, 5, 110,
     '{ "brand": "Ford", "model": "Focus", "year": 2018, "horsepower": 92, "emission": 115, "min_age": 18, "reg_id": "MN012OP", "photo": "a548c786-94b9-4983-8052-da220c77e787.webp",
-        "description": "Tristique magna justo sollicitudin torquent penatibus malesuada nibh ipsum. Dis varius finibus aliquet ex est elementum placerat enim. Netus venenatis viverra velit cursus consectetur imperdiet. Pharetra ultricies urna curae etiam dictumst, nec sollicitudin. Fusce velit accumsan ligula justo urna mollis. Phasellus cubilia egestas ligula, purus tempus varius purus. Class litora blandit odio laoreet mollis." }'),
+        "description": "Tristique magna justo sollicitudin torquent penatibus malesuada nibh ipsum. Dis varius finibus aliquet ex est elementum placerat enim. Netus venenatis viverra velit cursus consectetur imperdiet. Pharetra ultricies urna curae etiam dictumst, nec sollicitudin. Fusce velit accumsan ligula justo urna mollis. Phasellus cubilia egestas ligula, purus tempus varius purus. Class litora blandit odio laoreet mollis.",
+        "fuel_consumption": 5.6
+    }'),
 ('car', 3, 5, 90,
     '{ "brand": "Renault", "model": "Clio", "year": 2020, "horsepower": 65, "emission": 97, "min_age": 18, "reg_id": "QR345ST", "photo": "4b831f1f-cece-4c07-a654-a66bde1c217d.webp", 
-        "description": "In maximus sed felis; mus eleifend himenaeos integer himenaeos. Orci nullam pellentesque ante ante penatibus gravida urna. Posuere vulputate sodales ante ac imperdiet. Maximus hendrerit vivamus nam venenatis sodales auctor porta nulla. Netus a augue eu nec risus vitae habitant duis. Sociosqu aliquam vehicula mattis ut libero cubilia. Enim volutpat in sapien morbi luctus mattis nisl scelerisque euismod. Ullamcorper hendrerit enim cursus pharetra class phasellus eleifend." }'),
+        "description": "In maximus sed felis; mus eleifend himenaeos integer himenaeos. Orci nullam pellentesque ante ante penatibus gravida urna. Posuere vulputate sodales ante ac imperdiet. Maximus hendrerit vivamus nam venenatis sodales auctor porta nulla. Netus a augue eu nec risus vitae habitant duis. Sociosqu aliquam vehicula mattis ut libero cubilia. Enim volutpat in sapien morbi luctus mattis nisl scelerisque euismod. Ullamcorper hendrerit enim cursus pharetra class phasellus eleifend.",
+       "fuel_consumption": 5.0 
+    }'),
 ('car', 3, 5, 120,
-    '{ "brand": "BMW", "model": "Series 3", "year": 2017, "horsepower": 110, "emission": 125, "min_age": 21, "reg_id": "UV678WX", "photo": "car00000.jpg",
-        "description": "Lorem ipsum odor amet, consectetuer adipiscing elit. Pretium vitae justo aptent nunc adipiscing suspendisse augue rhoncus ullamcorper. Finibus molestie eget accumsan libero lacus in eu. Ac placerat aliquet urna, urna lacinia fusce. Sociosqu imperdiet conubia imperdiet; lacinia integer ultricies. Pulvinar congue aptent non elit gravida volutpat dis ullamcorper. Magnis praesent imperdiet tincidunt lorem mollis tellus ipsum curae." }'),
+    '{ "brand": "BMW", "model": "Series 3", "year": 2017, "horsepower": 110, "emission": 125, "min_age": 21, "reg_id": "UV678WX", "photo": "88abd4c6-8996-4c7e-bc06-96076792f9d1.webp",
+        "description": "Lorem ipsum odor amet, consectetuer adipiscing elit. Pretium vitae justo aptent nunc adipiscing suspendisse augue rhoncus ullamcorper. Finibus molestie eget accumsan libero lacus in eu. Ac placerat aliquet urna, urna lacinia fusce. Sociosqu imperdiet conubia imperdiet; lacinia integer ultricies. Pulvinar congue aptent non elit gravida volutpat dis ullamcorper. Magnis praesent imperdiet tincidunt lorem mollis tellus ipsum curae.",
+        "fuel_consumption": 6.7
+    }'),
 ('car', 2, 4, 130,
-    '{ "brand": "Mercedes", "model": "C-Class", "year": 2019, "horsepower": 120, "emission": 130, "min_age": 21, "reg_id": "YZ901AB", "photo": "car00000.jpg",
-        "description": "Nisl eleifend nunc in, luctus non efficitur. Justo sodales litora iaculis orci; et quam id. Suspendisse ultricies consectetur lacus vehicula consequat in ligula convallis. Suscipit risus conubia pretium magna; libero dapibus. Magna quisque ridiculus himenaeos euismod, at sapien tellus posuere. Inceptos hendrerit vivamus libero at vestibulum cursus laoreet dictumst. Vulputate duis libero efficitur sit sed euismod nullam. Etiam nec class cubilia aenean per nisl faucibus luctus." }'),
+    '{ "brand": "Mercedes", "model": "C-Class", "year": 2019, "horsepower": 120, "emission": 130, "min_age": 21, "reg_id": "YZ901AB", "photo": "4ff860bf-24a1-491b-8d62-b9139cf4a21a.webp",
+        "description": "Nisl eleifend nunc in, luctus non efficitur. Justo sodales litora iaculis orci; et quam id. Suspendisse ultricies consectetur lacus vehicula consequat in ligula convallis. Suscipit risus conubia pretium magna; libero dapibus. Magna quisque ridiculus himenaeos euismod, at sapien tellus posuere. Inceptos hendrerit vivamus libero at vestibulum cursus laoreet dictumst. Vulputate duis libero efficitur sit sed euismod nullam. Etiam nec class cubilia aenean per nisl faucibus luctus.",
+        "fuel_consumption": 6.7
+    }'),
 ('car', 1, 1, 100,
-    '{ "brand": "Audi", "model": "A3", "year": 2021, "horsepower": 100, "emission": 105, "min_age": 18, "reg_id": "CD234EF", "photo": "car00000.jpg",
-        "description": "Varius augue placerat integer mollis a malesuada, dictumst tortor amet. Nunc ex cursus dolor purus netus turpis pharetra nisi. Scelerisque suscipit nisi iaculis neque sapien morbi. Suspendisse ullamcorper lobortis lobortis tempor fermentum fames vestibulum. Mollis phasellus aliquet etiam velit malesuada condimentum per. Tincidunt sodales amet in feugiat erat molestie parturient taciti. Molestie fringilla imperdiet libero nibh ornare. Tincidunt id et augue nunc scelerisque rutrum." }'),
+    '{ "brand": "Audi", "model": "A3", "year": 2021, "horsepower": 100, "emission": 105, "min_age": 18, "reg_id": "CD234EF", "photo": "d1c6f41a-62b1-4098-b106-29c3f6591506.webp",
+        "description": "Varius augue placerat integer mollis a malesuada, dictumst tortor amet. Nunc ex cursus dolor purus netus turpis pharetra nisi. Scelerisque suscipit nisi iaculis neque sapien morbi. Suspendisse ullamcorper lobortis lobortis tempor fermentum fames vestibulum. Mollis phasellus aliquet etiam velit malesuada condimentum per. Tincidunt sodales amet in feugiat erat molestie parturient taciti. Molestie fringilla imperdiet libero nibh ornare. Tincidunt id et augue nunc scelerisque rutrum.",
+       "fuel_consumption": 5.4 
+    }'),
 ('car', 1, 2, 90,
-    '{ "brand": "Peugeot", "model": "208", "year": 2020, "horsepower": 75, "emission": 98, "min_age": 18, "reg_id": "GH567IJ", "photo": "car00000.jpg",
-        "description": "Pellentesque molestie eleifend nisl sollicitudin gravida sollicitudin eleifend faucibus faucibus. Interdum est tristique lorem; nec vehicula erat fames. Pellentesque accumsan elementum duis taciti scelerisque integer erat ad etiam! Nam est augue fames sed nostra integer leo per praesent. Tempus lacinia per proin inceptos semper tempor. Dapibus efficitur efficitur lectus ut; quisque nascetur lectus vehicula. Purus venenatis at tempus posuere ipsum convallis. Amet maximus volutpat cursus ornare neque aliquam luctus mauris. Posuere amet dui duis maximus vestibulum primis." }'),
+    '{ "brand": "Peugeot", "model": "208", "year": 2020, "horsepower": 75, "emission": 98, "min_age": 18, "reg_id": "GH567IJ", "photo": "32351763-4475-4f64-941b-c47e28a9c1f6.webp",
+        "description": "Pellentesque molestie eleifend nisl sollicitudin gravida sollicitudin eleifend faucibus faucibus. Interdum est tristique lorem; nec vehicula erat fames. Pellentesque accumsan elementum duis taciti scelerisque integer erat ad etiam! Nam est augue fames sed nostra integer leo per praesent. Tempus lacinia per proin inceptos semper tempor. Dapibus efficitur efficitur lectus ut; quisque nascetur lectus vehicula. Purus venenatis at tempus posuere ipsum convallis. Amet maximus volutpat cursus ornare neque aliquam luctus mauris. Posuere amet dui duis maximus vestibulum primis.",
+       "fuel_consumption": 5.1 
+    }'),
 ('car', 1, 3, 50,
-    '{ "brand": "Tesla", "model": "Model 3", "year": 2022, "horsepower": 150, "emission": 0, "min_age": 21, "reg_id": "KL890MN", "photo": "car00000.jpg",
-        "description": "Tristique magna justo sollicitudin torquent penatibus malesuada nibh ipsum. Dis varius finibus aliquet ex est elementum placerat enim. Netus venenatis viverra velit cursus consectetur imperdiet. Pharetra ultricies urna curae etiam dictumst, nec sollicitudin. Fusce velit accumsan ligula justo urna mollis. Phasellus cubilia egestas ligula, purus tempus varius purus. Class litora blandit odio laoreet mollis."}');
+    '{ "brand": "Tesla", "model": "Model 3", "year": 2022, "horsepower": 150, "emission": 0, "min_age": 21, "reg_id": "KL890MN", "photo": "bc67f176-45a1-4c1d-ad66-72b0928338c4.webp",
+        "description": "Tristique magna justo sollicitudin torquent penatibus malesuada nibh ipsum. Dis varius finibus aliquet ex est elementum placerat enim. Netus venenatis viverra velit cursus consectetur imperdiet. Pharetra ultricies urna curae etiam dictumst, nec sollicitudin. Fusce velit accumsan ligula justo urna mollis. Phasellus cubilia egestas ligula, purus tempus varius purus. Class litora blandit odio laoreet mollis.",
+        "fuel_consumption": 0.0
+        }');
 
 
 -- DROP TABLE IF EXISTS booking_status;

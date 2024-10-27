@@ -9,8 +9,10 @@ console.log(props)
     <div class="card item-card shadow-sm" no-body>
         <div class="row no-gutters">
             <div class="col-md-4 col-lg-3 p-2">
-            <ItemCardSmall :brand="item.item_details.brand" :model="item.item_details.model" :photo="item.item_details.photo"/>
+                <ItemCardSmall :brand="item.item_details.brand" :model="item.item_details.model" :photo="item.item_details.photo"/>
+            <!--
                 <img class="img-thumbnail item-card-image" :src="`/public/static/images/${ item.item_details.photo }`">
+            -->
             </div>
             <div class="col-md-8 col-lg-9">
                 <div class="card-body d-flex flex-column h-100">
@@ -68,7 +70,7 @@ console.log(props)
 
                     <div class="d-flex justify-content-between align-items-center">
                         <span class="font-1h">{{  item.item_price_weight }} crediti</span>
-                        <a type="button" class="btn btn-primary" :href="`/items/${item.id}`">Prenota</a>
+                        <a type="button" class="btn btn-primary" :href="`/items/${item.id}`">Dettagli</a>
                     </div>
                 </div </div>
             </div>
