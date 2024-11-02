@@ -34,13 +34,13 @@ class CollectionBase():
     _tablename = 'dual'
     _extra_operations = []
     _kind = object
+    _query = "SELECT * FROM {tablename}"
 
     def __init__(self):
         logger.debug(self.__class__.__name__ + ".__init__")
         self._db = db.get_db()
         self._db.row_factory = _dict_factory
         desc = self._db.execute(f"pragma table_info('{self._tablename}')").fetchall()
-        logger.debug(desc)
         self._columns = [d['name'] for d in desc]
 
     def __call__(self, *args, **kwds):
@@ -48,10 +48,9 @@ class CollectionBase():
         logger.debug("kwds: " + repr(kwds))
         pass
 
-    def get_all(self, query=None):
+    def get_all(self):
         logger.debug(self.__class__.__name__ + ".get_all();")
-        if not query:
-            query = f"SELECT * FROM {self._tablename}"
+        query = self._query.format(tablename=self._tablename)
         rows = self._db.execute(query).fetchall()
         return rows
 
@@ -63,12 +62,16 @@ class CollectionBase():
             return True
         return False
 
+    def new_element(self, **kwargs):
+        if self._kind:
+            return self._kind(**kwargs)
+
+    def kind(self):
+        return self.__class__.__name__
+
     def get(self, value):
-        query = f"SELECT * FROM {self._tablename} WHERE {self._pkey} = {value}"
-        logger.debug(f"query = '{query}'")
-        resultset = self._db.execute(query).fetchone()
-        logger.debug("resultset: " + pformat(resultset))
-        return resultset
+        if self._kind:
+            return self._kind(id=value)
     
     def find(self, **kwargs):
         logger.debug(self.__class__.__name__ + f".filter({kwargs});")
@@ -104,14 +107,6 @@ class CollectionBase():
         logger.debug(self.__class__.__name__ + f".add({kwargs});")
         return { 'query': query }
 
-    def new_element(self, **kwargs):
-        if self._kind:
-            return self._kind(**kwargs)
-    
-    def kind(self):
-        return self.__class__.__name__
-        
-        
 
 class ResourceBase():
     _db = None

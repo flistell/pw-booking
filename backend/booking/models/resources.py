@@ -182,7 +182,7 @@ class Item(ResourceBase):
     _pkey = 'id'
     _tablename = 'catalog'
     _extra_operations = [ 'is_available' ]
-    _query = f"select * FROM catalog c INNER JOIN location l on c.item_location_id = l.id ORDER BY l.city"
+    _query = "select *,c.id AS id FROM catalog c INNER JOIN location l on c.item_location_id = l.id WHERE c.id = {value}"
     
     def is_available(self, **kwargs):
         query = '''
@@ -213,6 +213,7 @@ class Item(ResourceBase):
 class Items(CollectionBase):
     _tablename = "catalog"
     _kind = Item
+    _query = "select *,c.id AS id FROM catalog c INNER JOIN location l on c.item_location_id = l.id ORDER BY l.city"
    
     def _jsonify(self, data):
         # sovrascrive il metodo di default per riformattare item_details
@@ -229,13 +230,8 @@ class Items(CollectionBase):
             data['item_details'] = json.loads(data['item_details'] )
         return data 
     
-    def get(self, id):
-        obj = Item(id=id)
-        return obj
-    
     def get_all(self):
-        query = f"select * FROM catalog c INNER JOIN location l on c.item_location_id = l.id ORDER BY l.city"
-        return self._jsonify(super().get_all(query))
+        return self._jsonify(super().get_all())
     
     def filter(self, **kwargs):
         logger.debug("args: " + pprint.pformat(kwargs))
