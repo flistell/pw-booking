@@ -7,6 +7,7 @@ const today = ref(new Date());
 </script>
 
 <template>
+    <!-- components/Item.vue -->
     <div id="item_main">
         <div id="item_row" class="row align-items-start">
             <div id="item_col" class="col-lg-8 mb-3 mb-lg-0">
@@ -144,7 +145,7 @@ export default {
                 query: {
                     from: this.date_from.getTime(), 
                     to: this.date_to.getTime(), 
-                    id: this.item.id,
+                    itemId: this.item.id,
                     brand: this.item.item_details.brand,
                     model: this.item.item_details.model,
                     image: this.item.item_details.photo

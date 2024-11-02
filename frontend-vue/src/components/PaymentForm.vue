@@ -2,5 +2,5 @@
 </script>
 
 <template>
-    PaymentModal
+    <!-- componentes/PaymentForm.vue -->
 </template>

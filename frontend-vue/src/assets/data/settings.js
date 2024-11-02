@@ -1,3 +1,4 @@
 export const settings = {
-    backendUrl: 'http://localhost:5000/resources/'
+    resourcesUrl: 'http://localhost:5000/resources',
+    backendUrl: 'http://localhost:5000'
 }

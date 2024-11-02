@@ -1,5 +1,5 @@
 import logging
-import pprint
+from pprint import pformat, pprint
 from booking import db
 
 logger = logging.getLogger(__name__)
@@ -33,13 +33,14 @@ class CollectionBase():
     _pkey = 'id'
     _tablename = 'dual'
     _extra_operations = []
-    _kind = None
+    _kind = object
 
     def __init__(self):
-        logger.debug(type(self).__name__ + ".__init__")
+        logger.debug(self.__class__.__name__ + ".__init__")
         self._db = db.get_db()
         self._db.row_factory = _dict_factory
         desc = self._db.execute(f"pragma table_info('{self._tablename}')").fetchall()
+        logger.debug(desc)
         self._columns = [d['name'] for d in desc]
 
     def __call__(self, *args, **kwds):
@@ -48,21 +49,45 @@ class CollectionBase():
         pass
 
     def get_all(self, query=None):
-        logger.debug(type(self).__name__ + ".get_all();")
+        logger.debug(self.__class__.__name__ + ".get_all();")
         if not query:
             query = f"SELECT * FROM {self._tablename}"
         rows = self._db.execute(query).fetchall()
         return rows
 
+    def has(self, id):
+        logger.debug(f"{self.__class__.__name__}.has({id});")
+        query = f"SELECT id FROM {self._tablename} WHERE id = '{id}'"
+        result = self._db.execute(query).fetchone()
+        if result:
+            return True
+        return False
+
     def get(self, value):
         query = f"SELECT * FROM {self._tablename} WHERE {self._pkey} = {value}"
         logger.debug(f"query = '{query}'")
         resultset = self._db.execute(query).fetchone()
-        logger.debug("resultset: " + pprint.pformat(resultset))
+        logger.debug("resultset: " + pformat(resultset))
         return resultset
-
+    
+    def find(self, **kwargs):
+        logger.debug(self.__class__.__name__ + f".filter({kwargs});")
+        query_prefix = f"SELECT id FROM {self._tablename} WHERE "
+        query_where_list = set()
+        for p, v in kwargs.items():
+            if p in self._columns:
+                query_where_list.add(f"{p} = '{v}'")
+        query = query_prefix + ' AND '.join(query_where_list)
+        logger.debug("query: " + query)
+        cursor = self._db.execute(query)
+        resultset = cursor.fetchone()
+        logger.debug("resultset: " + pformat(resultset))
+        result_obj = self._kind(id=resultset.get('id'))
+        return result_obj
+    
+    
     def filter(self, **kwargs):
-        logger.debug(type(self).__name__ + f".filter({kwargs});")
+        logger.debug(self.__class__.__name__ + f".filter({kwargs});")
         query_prefix = f"SELECT * FROM {self._tablename} WHERE "
         query_where_list = set()
         for p,v in kwargs.items():
@@ -72,9 +97,21 @@ class CollectionBase():
         logger.debug("query: " + query)
         cursor = self._db.execute(query)
         resultset = cursor.fetchall()
-        logger.debug("resultset: " + pprint.pformat(resultset))
+        logger.debug("resultset: " + pformat(resultset))
         return resultset
 
+    def add(self, **kwargs):
+        logger.debug(self.__class__.__name__ + f".add({kwargs});")
+        return { 'query': query }
+
+    def new_element(self, **kwargs):
+        if self._kind:
+            return self._kind(**kwargs)
+    
+    def kind(self):
+        return self.__class__.__name__
+        
+        
 
 class ResourceBase():
     _db = None
@@ -83,10 +120,12 @@ class ResourceBase():
     _extra_operations = []
     _collection = CollectionBase
     _id = None
-    _query = "SELECT * FROM {self._tablename} WHERE {self._pkey} = {value}"
+    #_query = "SELECT * FROM {self._tablename} WHERE {self._pkey} = {value}"
+    _query = "SELECT * FROM {tablename} WHERE {pkey} = {value}"
+    _data = dict() # contains data to/from table
     
     def __init__(self, id=None, data=dict()):
-        logger.debug(type(self).__name__ + ".__init__")
+        logger.debug(self.__class__.__name__ + ".__init__")
         self._db = db.get_db()
         self._db.row_factory = _dict_factory
         desc = self._db.execute(
@@ -95,32 +134,44 @@ class ResourceBase():
         if id and data:
             raise ValueError(
                 "'id' and 'data' argument cannot be used together.")
-        if id and not data:
-            data = self._from_table(id, self._query)
-            self._data = self._format(data)
+        if id and not data:  # Read object from table
+            query = self._query.format(tablename=self._tablename, pkey=self._pkey, value=id)
+            self._data = self._format(self._from_table(id, query))
             self._id = self._data[self._pkey]
-        if data and not id:
-            self._data = data
-        logger.debug("Created object: " + pprint.pformat(self))
+            logger.debug("Object read from table: " + pformat(self._data))
+        if data and not id:  # New object
+            for c in data:
+                if c in self._columns:
+                    self._data[c] = data[c]
+            logger.debug("Created new (unsaved) object: " + pformat(self._data))
+        logger.debug("Object: " + pformat(self.serialize()))
 
     def _format(self, data):
         return data        
 
     def _from_table(self, value, query=None):
-        logger.debug(f"query = '{query}'")
+        logger.debug("query: " + query)
         resultset = self._db.execute(query).fetchone()
-        logger.debug("resultset: " + pprint.pformat(resultset))
+        logger.debug("resultset: " + pformat(resultset))
         return resultset
 
     def serialize(self):
         return self._data
 
-    def get_operation(self, op_name):
+    def operation(self, op_name):
         logger.debug(f"op_name='{op_name}'")
         if op_name in self._extra_operations:
             return getattr(self, op_name)
         else:
             return None
+    def save(self, **kwargs):
+        raise NotImplementedError
+    
+    def get_id(self):
+        return self._id
+
+    def get(self, attribute):
+        return self._data.get(attribute, None)
 
 
 CollectionBase._kind = ResourceBase

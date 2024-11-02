@@ -3,7 +3,7 @@ from booking.models import registered_resources
 from booking.models import registered_collections
 from flask import jsonify, request
 import logging
-import pprint
+from pprint import pformat
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -37,7 +37,7 @@ def get_by_id(resource, id):
     collection = registered_collections[resource]()
     obj = collection.get(id)
     if args:
-        func = obj.get_operation(next(iter(args)))
+        func = obj.operation(next(iter(args)))
         logger.debug(func)
         if not func:
             return 'Operation not supported!', 400
@@ -50,17 +50,32 @@ def get_by_id(resource, id):
 @bp.route('/<resource>', methods=['POST'])
 def create(resource):
     logger.debug(f"POST {resource}")
-    if resource not in registered_resources:
+    if resource not in registered_collections:
         return "Resource not found", 404
     content_type = request.headers.get('Content-Type')
     if (content_type != 'application/json'):
         return 'Content-Type not supported!', 400
     data = request.json
-    logger.debug(pprint.pformat(data))
-    obj = registered_resources[resource]()
+    logger.debug(pformat(data))
+    collection = registered_collections[resource]()
     try:
-        id = obj.save(**data)
+        obj = collection.new_element(data=data)
+        logger.debug(pformat(obj))
+        logger.debug(pformat(obj.serialize()))
+        obj_id = obj.save()
+        response = {
+            'kind': collection.kind(),
+            'id': obj_id}
+        logger.debug("response:" + pformat(response) ) 
     except Exception as e:
         return str(e), 403
-    return jsonify({'id': id})
+    return jsonify({
+            'kind': collection.kind(),
+            'id': obj_id}
+         )
 
+
+@bp.route('/<resource>/<id>', methods=['PUT'])
+def update(resource):
+    logger.debug(f"PUT {resource}")
+    return jsonify({})

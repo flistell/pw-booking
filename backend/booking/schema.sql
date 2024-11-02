@@ -149,7 +149,8 @@ CREATE TABLE booking (
     booking_start DATETIME NOT NULL,
     booking_end DATETIME NOT NULL,
     booking_status TEXT NOT NULL,
-    delivery_address_id INTEGER NOT NULL,
+    delivery_address_id INTEGER,
+    payment_tx_id INTEGER,
     FOREIGN KEY (user_id) REFERENCES userprofile (id),
     FOREIGN KEY (booked_item_id) REFERENCES catalog (id),
     FOREIGN KEY (delivery_address_id) REFERENCES location (id)

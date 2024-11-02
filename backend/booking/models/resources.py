@@ -12,46 +12,66 @@ from . import _dict_factory
 logger = logging.getLogger("Model")
 logger.setLevel(logging.DEBUG)
 
+# Booking statues
+NEW = 0
+BOOKED = 1      # Booked, waiting for payment
+CONFIRMED = 2   # Payment confirmed
+CANCELLED = -1 
+ERROR = 99
+
+
+@resource
+class User(ResourceBase):
+    _tablename = "userprofile"
+
+    def authenticate(self, password=None):
+        if not password:
+            return None
+        if password == self._data.get('password', None):
+            return True
+        return False
+
 
 @collection
 class Users(CollectionBase):
     _tablename = "userprofile"
-    
-    # def get(self, username):
-    #     self.username = username
-    #     self._db = db.get_db()
-    #     user_row = self._db.execute(
-    #         'SELECT * FROM userprofile u WHERE u.username = ?', (username,)
-    #     ).fetchone()
-    #     if user_row is not None:
-    #         logger.debug(pprint.pformat(user_row))
-    #         self.id = user_row['id']
-    #         self.password = user_row['password'] 
-    #         self.common_name = user_row['common_name']
-    #         self.family_name = user_row['family_name']
-    #         self.mail_address = user_row['mail_address']
-    #         self.tax_id = user_row['tax_id']
-    # #         self.payment_method = user_row['payment_method']
+    _kind = User
 
-    # def serialize(self):
-    #     return {
-    #         'id': self.id,
-    #         'username': self.password,
-    #         'common_name': self.common_name,
-    #         'family_name': self.family_name,
-    #         'mail_address': self.mail_address,
-    #         'tax_id': self.tax_id,
-    #         'payment_method': self.payment_method
-    #     }
-        
-@collection
-class Bookings(CollectionBase):
-    _tablename = "booking"
+
+@resource
+class Booking(ResourceBase):
+    _pkey = 'id'
+    _tablename = 'booking'
+    _booking_statuses = ['new', 'booked', 'confirmed', 'cancelled']
+    _data = { 'booking_status': BOOKED }
     
-    def save(self, **kwargs):
-        #  TODO: check if car is booked in the same time frame
+    
+    def _check_parameters(self, **kwargs):
+        logger.debug(type(self).__name__ + f"._check_parameters({kwargs})")
+        args_keys = kwargs.keys()
+        missing = set()
+        for required_attr in ['user_id', 'booked_item_id', 'booking_end', 'booking_start']:
+            if required_attr not in args_keys:
+                missing.add(required_attr)
+        if len(missing) > 0:
+            raise ValueError("Missing parameters: " + repr(missing))
+
+    def _check_user(self, **kwargs):
+        logger.debug(type(self).__name__ + f"._check_user({kwargs})")
+        users = Users()
+        if not users.has(kwargs['user_id']):
+            raise ValueError(f"User '{kwargs['user_id']}' not registered.")
+    
+    def _check_item(self, **kwargs):
+        logger.debug(type(self).__name__ + f".check_item({kwargs})")
+        items = Items()
+        if not items.has(kwargs['booked_item_id']):
+            raise ValueError(f"Item '{kwargs['booked_item_id']}' not in catalog.")
+
+    def _check_booking_conflict(self, **kwargs):
+        logger.debug(type(self).__name__ + f"._check_booking_conflict({kwargs})")
         sql_booking_conflict = f'''
-        select * from booking 
+        select * from {self._tablename} 
         where 
             booked_item_id = {kwargs['booked_item_id']} and (
                 booking_start <= '{kwargs['booking_end']}' 
@@ -59,26 +79,102 @@ class Bookings(CollectionBase):
             )
         '''
         logger.debug(f"sql_booking_conflict: '{sql_booking_conflict}'")
-        cur = self._db.execute(sql_booking_conflict)
-        count = cur.fetchone()
-        logger.debug(f"count: '{cur.rowcount}'")
-        
+        count = self._db.execute(sql_booking_conflict).fetchone()
         if count:
-            logger.warning(f"Specified data is already booked: " + pprint.pformat(count))
-            raise ValueError(f"Invalid booking range. Resource {kwargs['booked_item_id']} already booked.")
+            logger.warning(
+                f"Specified data is already booked: " + pprint.pformat(count))
+            raise ValueError(
+                f"Invalid booking range. Resource {kwargs['booked_item_id']} already booked.")
+
+    def save(self):
+        logger.debug(type(self).__name__ + ".create()")
+        self._check_parameters(**self._data)
+        self._check_user(**self._data)
+        self._check_item(**self._data)
+        self._check_booking_conflict(**self._data)
+        if 'booking_status' not in self._data:
+            self._data
         
         sql_insert = f'''
         INSERT INTO {self._tablename}
-            (user_id, booked_item_id, booking_start, booking_end, booking_status, delivery_address_id)
+            (user_id, booked_item_id, booking_start, booking_end, booking_status )
         VALUES
-            (:user_id, :booked_item_id, :booking_start, :booking_end, :booking_status, :delivery_address_id)
+            (:user_id, :booked_item_id, :booking_start, :booking_end, :booking_status)
         '''
         logger.debug(f"sql_insert: '{sql_insert}'")
-        cur = self._db.execute(sql_insert, kwargs)
+        cur = self._db.execute(sql_insert, self._data)
+        self._db.commit()
+        self._id = cur.lastrowid
+        cur.close()
+        logger.debug(f"insert new row with id: '{self._id}'")
+        return self._id
+
+    def confirm(self):
+        logger.debug(type(self).__name__ + ".confirm()")
+        if self._booking_status != BOOKED:
+            raise ValueError(f"Transaction is in incopatible state. Expected BOOKED, found {self._booking_status}")
+        self._booking_status = CONFIRMED
+        ret = self.update(booking_status=CONFIRMED)
+        if ret.rowcount != 1:
+            raise RuntimeError("Something wen wrong while updating booking status.") 
+        self._booking_status = BOOKED
+        ret = {
+            'booking_status': 'BOOKED'
+        }
+        return ret
+
+    def update(self, **kwargs):
+        logger.debug(type(self).__name__ + ".update()")
+        params_list = [] 
+        for p, v in kwargs.items():
+            params_list.append(f"{p} = '{v}'")
+        params = ','.join(params_list)
+        logger.debug(params)
+        
+        sql_update = f'''
+            UPDATE {self._tablename} 
+            SET {params}
+            WHERE id = {self._id}
+        '''
+        logger.debug(f"sql_update: {sql_update}")
+        cur = self._db.execute(sql_update, self._data)
         self._db.commit()
         cur.close()
-        logger.debug(f"insert new row with id: '{cur.lastrowid}'")
-        return cur.lastrowid
+        ret = {
+            'rowcount': cur.rowcount,
+        }
+        logger.debug(f"updated '{cur.rowcount}' rows.")
+        return ret
+
+    def update_all(self):
+        logger.debug(type(self).__name__ + ".update_all()")
+
+        sql_update = f'''
+        UPDATE {self._tablename} 
+        SET
+            user_id = :user_id,
+            booked_item_id =  :booked_item_id,
+            booking_start = :booking_start,
+            booking_end = :booking_end,
+            booking_status = :booking_status,
+            delivery_address_id = :deivery_address_id
+        WEHERE id = :id
+        '''
+        logger.debug(f"sql_update: '{sql_update}'")
+        cur = self._db.execute(sql_update, self._data)
+        self._db.commit()
+        cur.close()
+        ret = {
+            'rowcount': cur.rowcount,
+        }
+        logger.debug(f"updated '{cur.rowcount}' rows.")
+        return ret
+
+
+@collection
+class Bookings(CollectionBase):
+    _tablename = "booking"
+    _kind = Booking
 
 
 @resource

@@ -2,6 +2,7 @@
 import { RouterLink, RouterView } from 'vue-router'
 import Navbar from '@/components/Navbar.vue'
 import Sidebar from '@/components/Sidebar.vue'
+import { myAuthStore } from '@/stores/authUserStore';
 
 </script>
 
@@ -9,7 +10,9 @@ import Sidebar from '@/components/Sidebar.vue'
   <div id="app" class="app">
     <div class="container">
       <Navbar/>
-      <!-- Sidebar/-->
+      <!--
+      <Sidebar/>
+      -->
       <RouterView />
     </div>
   </div>

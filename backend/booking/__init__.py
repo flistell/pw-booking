@@ -1,12 +1,14 @@
 import os
 from flask import Flask
 from flask_cors import CORS
+from rich.logging import RichHandler
 import logging
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
     level=logging.DEBUG,
-    format='%(asctime)s %(levelname)s %(name)s %(module)s.%(funcName)s() - %(message)s'
+    format='%(asctime)s %(levelname)s %(name)s %(filename)s:%(lineno)d %(module)s.%(funcName)s() - %(message)s',
+    handlers=[RichHandler()]
     )
 
 
@@ -33,6 +35,7 @@ def create_app(test_config=None):
         r"/resources/*": {"origins": "*"},
         r"/catalog/*": {"origins": "*"},
         r"/ping/*": {"origins": "*"},
+        r"/login/*": {"origins": "*"}
         })
     
     @app.route('/ping')
@@ -48,5 +51,8 @@ def create_app(test_config=None):
     
     import booking.views.catalog as catalog
     app.register_blueprint(catalog.bp)
+
+    import booking.views.login as login
+    app.register_blueprint(login.bp)
 
     return app

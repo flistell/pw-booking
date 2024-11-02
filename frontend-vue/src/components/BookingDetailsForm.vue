@@ -1,19 +1,21 @@
 <script setup>
-import { ref } from 'vue'
+import { toRef } from 'vue'
 import axios from 'axios'
 import { settings } from '@/assets/data/settings.js'
 
 const props = defineProps([
-    'carId',
+    'itemId',
     'userId',
     'name',
-    'familyname'
+    'familyname',
+    'from',
+    'to'
 ])
 
-const item = ref({})
+const form_userid = toRef(props, 'userId') //non so se serve, è una prova
 
 function fetchUser(userId){
-    const url = settings.backendUrl + '/users/' + props.id;
+    const url = `${settings.resourcesUrl}/users/${props.id}`
     axios
         .get(url)
         .then((response) => {
@@ -25,23 +27,15 @@ function fetchUser(userId){
         });
 }
 
-
 function initTransaction(){
-    const catalogUrl = settings.backendUrl + '/items/'
-    axios.get(catalogUrl)
-        .then((response) => {
-            this.item = response.data
-        })
-        .catch((error) => {
-            console.error(error)
-        })
-    console.log(this.item)
-    
-    const userUrl = settings.backendUrl + '/items/'
-    
-    
-    const bookingsUrl = settings.backendUrl + '/bookings/'
-    axios.get(catalogUrl)
+    const bookingsUrl = `${settings.resourcesUrl}/bookings`
+    const booking = {
+        user_id: props.userId,
+        booked_item_id: props.itemId,
+        booking_start: props.fromDate,
+        booking_end: props.toDate
+    }
+    axios.post(bookingsUrl, )
         .then((response) => {
             this.item = response.data
         })
@@ -59,6 +53,7 @@ function onFocusout(userid){
 </script>
 
 <template>
+    <!-- BEGIN components/BookingWizardForm.vue -->
     <h4>Dettagli della prenotazione.</h4>
     <form id="BookingWizardForm">
         <div id="bwf_div1" class="mb-3">
@@ -98,5 +93,6 @@ function onFocusout(userid){
             data-bs-target="#paymentForm"
             @click.prevent="initTransaction()"
             >Procedi al pagamento</button>
-    </form> <!-- BookingWizardForm -->
+    </form>
+    <!-- BEGIN components/BookingDetailsForm.vue -->
 </template>
