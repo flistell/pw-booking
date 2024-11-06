@@ -20,18 +20,20 @@ const { user } = storeToRefs(authUserStore);
           <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
           <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
-        <ul class="navbar-nav mr-auto mb-2 mb-lg-0">
+        <ul v-if="user" class="navbar-nav mr-auto mb-2 mb-lg-0">
           <li class="nav-item dropdown profile-menu">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
               aria-expanded="false">
               <div class="profile-pic">
-                <img src="https://i.pravatar.cc/50?img={{ user.id }}" alt="Profile Picture">
+                <img :src="`https://i.pravatar.cc/50?img=${user.id}`" alt="Profile Picture">
               </div>
               <!-- You can also use icon as follows: -->
               <!--  <i class="fas fa-user"></i> -->
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" href="/manage"><i class="fas fa-sliders-h fa-fw"></i> Gestisci Prenotazioni</a></li>
+              <li class="dropdown-item"><i class="fas fa-sliders-h fa-fw"></i><i>{{ user.username }}</i></li>
+              <li><a class="dropdown-item" href="/manage"><i class="fas fa-sliders-h fa-fw"></i> Gestisci
+                  Prenotazioni</a></li>
               <li><a class="dropdown-item" href="#"><i class="fas fa-sliders-h fa-fw"></i> Account</a></li>
               <li><a class="dropdown-item" href="#"><i class="fas fa-cog fa-fw"></i> Settings</a></li>
               <li>

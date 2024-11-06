@@ -6,6 +6,7 @@ import HomeView from '../views/HomeView.vue'
 import BookingWizard from '@/views/BookingWizard.vue'
 import CheckoutView from '@/views/CheckoutView.vue'
 import LoginView from '@/views/LoginView.vue'
+import BookingAdmin from '@/views/BookingAdmin.vue'
 import { myAuthStore } from '@/stores/authUserStore'
 
 export const router = createRouter({
@@ -49,18 +50,20 @@ export const router = createRouter({
       props: route => ({
         id: route.query.id,
         from: route.query.from,
-        to: route.query.to,
-        brand: route.query.brand,
-        model: route.query.model,
-        photo: route.query.photo
+        to: route.query.to
       })
+    },
+    {
+      path: '/admin',
+      name: 'BookingAdmin',
+      component: BookingAdmin
     },
     { path: '/:pathMatch(.*)*', redirect: '/' }
   ]
 });
 
 router.beforeEach(async (to) => {
-  const publicPages = [ '/login' ];
+  const publicPages = [ '/login' ]
   const authRequired = !publicPages.includes(to.path);
   const authUserStore = myAuthStore();
 

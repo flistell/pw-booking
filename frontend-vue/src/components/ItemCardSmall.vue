@@ -8,11 +8,12 @@ const props = defineProps({
 
 <template>
     <div id="item_card_small" class="card">
+    <!-- BEGIN components/ItemCardSmall.vue-->
         <div>
             <h2 class="card-title">{{ brand }} {{ model }}</h2>
             <img class="img-thumbnail rounded item-card-image" :src="`/public/static/images/${photo}`">
         </div>
-
+    <!-- END components/ItemCardSmall.vue-->
     </div><!-- bw_item_card-->
 </template>
 

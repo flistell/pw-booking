@@ -2,11 +2,11 @@
 import ItemCardSmall from '../components/ItemCardSmall.vue'
 
 const props = defineProps(['item'])
-console.log(props)
+console.log("ItemCard props", props.item)
 </script>
 
 <template>
-    <!-- components/ItemCard.vue-->
+    <!-- BEGIN components/ItemCard.vue-->
     <div class="card item-card shadow-sm" no-body>
         <div class="row no-gutters">
             <div class="col-md-4 col-lg-3 p-2">
@@ -56,12 +56,6 @@ console.log(props)
                                 {{ item.item_details.fuel_consumption }} l/100Km
                             </span>
                         </div>
-                        <!-- <div v-for="facility, i in hotel.facilities" :key="i">
-                            <i class="mr-1 text-primary" :class="facilityIcons[facility]"></i>
-                            <span class="text-body-secondary">
-                                {{ facility | capitalize }}
-                            </span>
-                        </div> -->
                     </div>
                     <hr class="w-100">
 
@@ -73,10 +67,11 @@ console.log(props)
                         <span class="font-1h">{{ item.item_price_weight }} crediti</span>
                         <a type="button" class="btn btn-primary" :href="`/items/${item.id}`">Dettagli</a>
                     </div>
-                </div </div>
+                </div>
             </div>
         </div>
     </div>
+    <!-- END components/ItemCard.vue-->
 </template>
 
 <style>
