@@ -47,3 +47,4 @@ def login_simple():
     if not user or not user.authenticate(password=data['password']):
         return jsonify({'message': 'Invalid credentials', 'authenticated': False}), 401
     return jsonify({'authenticated': True})
+

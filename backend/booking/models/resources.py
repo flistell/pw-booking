@@ -45,7 +45,6 @@ class Booking(ResourceBase):
     _booking_statuses = ['new', 'booked', 'confirmed', 'cancelled']
     _data = { 'booking_status': BOOKED }
     
-    
     def _check_parameters(self, **kwargs):
         logger.debug(type(self).__name__ + f"._check_parameters({kwargs})")
         args_keys = kwargs.keys()
@@ -109,22 +108,27 @@ class Booking(ResourceBase):
         logger.debug(f"insert new row with id: '{self._id}'")
         return self._id
 
-    def confirm(self):
+    def _confirm(self):
         logger.debug(type(self).__name__ + ".confirm()")
         if self._booking_status != BOOKED:
             raise ValueError(f"Transaction is in incopatible state. Expected BOOKED, found {self._booking_status}")
         self._booking_status = CONFIRMED
-        ret = self.update(booking_status=CONFIRMED)
+        ret = self._update_internal(booking_status=CONFIRMED)
         if ret.rowcount != 1:
+            self._booking_status = BOOKED
             raise RuntimeError("Something wen wrong while updating booking status.") 
-        self._booking_status = BOOKED
         ret = {
-            'booking_status': 'BOOKED'
+            'id': self._id,
+            'booking_status': self._booking_status
         }
         return ret
 
     def update(self, **kwargs):
-        logger.debug(type(self).__name__ + ".update()")
+        logger.debug(type(self).__name__ + ".update(**kwargs)")
+        return self._confirm();
+
+    def _update_internal(self, **kwargs):
+        logger.debug(type(self).__name__ + "._update_internal(**kwargs)")
         params_list = [] 
         for p, v in kwargs.items():
             params_list.append(f"{p} = '{v}'")
@@ -146,7 +150,7 @@ class Booking(ResourceBase):
         logger.debug(f"updated '{cur.rowcount}' rows.")
         return ret
 
-    def update_all(self):
+    def _update_all(self):
         logger.debug(type(self).__name__ + ".update_all()")
 
         sql_update = f'''

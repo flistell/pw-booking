@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.DEBUG)
 def list_resources():
     list = [c.lower() for c in registered_collections]
     return jsonify(list)
-    
+  
 
 @bp.route('/<resource>', methods=['GET'])
 def get_all(resource):
@@ -63,10 +63,6 @@ def create(resource):
         logger.debug(pformat(obj))
         logger.debug(pformat(obj.serialize()))
         obj_id = obj.save()
-        response = {
-            'kind': collection.kind(),
-            'id': obj_id}
-        logger.debug("response:" + pformat(response) ) 
     except Exception as e:
         return str(e), 403
     return jsonify({
@@ -78,4 +74,16 @@ def create(resource):
 @bp.route('/<resource>/<id>', methods=['PUT'])
 def update(resource):
     logger.debug(f"PUT {resource}")
+    if resource not in registered_collections:
+        return "Resource not found", 404
+    content_type = request.headers.get('Content-Type')
+    if (content_type != 'application/json'):
+        return 'Content-Type not supported!', 400
+    data = request.json
+    logger.debug(pformat(data))
+    if 'id' not in data:
+        return jsonify({})
+    collection = registered_collections[resource]()
+    obj = collection.get(id)
+    obj.update(**data)
     return jsonify({})

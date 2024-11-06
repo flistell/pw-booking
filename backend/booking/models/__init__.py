@@ -103,9 +103,9 @@ class CollectionBase():
         logger.debug("resultset: " + pformat(resultset))
         return resultset
 
-    def add(self, **kwargs):
-        logger.debug(self.__class__.__name__ + f".add({kwargs});")
-        return { 'query': query }
+    # def add(self, **kwargs):
+    #     logger.debug(self.__class__.__name__ + f".add({kwargs});")
+    #     return { 'query': query }
 
 
 class ResourceBase():
@@ -159,7 +159,11 @@ class ResourceBase():
             return getattr(self, op_name)
         else:
             return None
+
     def save(self, **kwargs):
+        raise NotImplementedError
+    
+    def update(self, **kwargs):
         raise NotImplementedError
     
     def get_id(self):
