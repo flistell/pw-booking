@@ -1,8 +1,10 @@
 <script setup>
 import { settings } from '@/assets/data/settings.js'
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router'
 import axios from 'axios';
 
+const router = userRouter()
 const bookings = ref([])
 
 const getBookings = () => {
@@ -17,6 +19,13 @@ const getBookings = () => {
             console.error(error);
         })
     }
+
+const openDetails = () => {
+    router.push({
+        path: '/bookings'
+    })
+}
+
 
 onMounted(() => { getBookings() })
 
@@ -55,6 +64,7 @@ onMounted(() => { getBookings() })
                             </td>
                             <td>
                                 <div class="btn-group" role="group">
+                                    <button type="button" @onclick="openDetails" class="btn btn-primary btn-sm">Details</button>
                                     <button type="button" class="btn btn-warning btn-sm">Update</button>
                                     <button type="button" class="btn btn-danger btn-sm">Cancel</button>
                                 </div>

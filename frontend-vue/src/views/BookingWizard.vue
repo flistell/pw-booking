@@ -29,7 +29,28 @@ const item = ref({
     }
 })
 
+// Technical Debt: non il massimo dell'eleganza...
+
+const onDetailsForm = ref(true)
+const onPaymentForm = ref(false)
+const onProcessingForm = ref(false)
+const onSuccesForm = ref(false)
+const onErrorForm = ref(false)
+const paymentDetails = ref({})
+const errorMessage = ref(null)
+const booking_id = ref(-1)
+
+const fromDate = new Date()
+fromDate.setTime(props.from)
+
+const toDate = new Date()
+toDate.setTime(props.to)
+
+const booking_confirmation_id = ref(null)
+
 console.log("item id", props.id)
+
+// Functions
 
 const getItemDetails = () => {
     const url = `${settings.resourcesUrl}/items/${props.id}`
@@ -45,55 +66,7 @@ const getItemDetails = () => {
         });
 }
 
-const initBooking = () => {
-    const bookingsUrl = `${settings.resourcesUrl}/bookings`
-    const booking = {
-        user_id: user.value.id,
-        booked_item_id: props.id,
-        booking_start: props.from,
-        booking_end: props.to
-    }
-
-    axios.post(bookingsUrl, booking)
-        .then((response) => {
-            console.log("Booking", response.data)
-            booking_id.value = response.data.id
-            console.log('BookingDetailForm booked: ', booking_id)
-        })
-
-
-}
-
-onMounted(() => getItemDetails())
-
-const fromDate = new Date()
-fromDate.setTime(props.from)
-
-const toDate = new Date()
-toDate.setTime(props.to)
-
-// Technical Debt: non il massimo dell'eleganza...
-
-const onDetailsForm = ref(true)
-const onPaymentForm = ref(false)
-const onProcessingForm = ref(false)
-const onSuccesForm = ref(false)
-const onErrorForm = ref(false)
-const paymentDetails = ref({})
-const errorMessage = ref(null)
-const booking_id = ref(null)
-
-const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
-
-
-
-const cancelBooking = () => {
-
-}
-
-
-async function hideAll(){
-    console.log("hideAll")
+const hideAll = () => {
     onDetailsForm.value = false
     onPaymentForm.value = false
     onProcessingForm.value = false
@@ -101,11 +74,12 @@ async function hideAll(){
     onErrorForm.value = false
 }
 
-async function orderPayment(){
-    console.log("orderPayment")
-    await hideAll()
-    onProcessingForm.value = true
-    
+
+const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
+
+const initBooking = async () => {
+    console.log("initBooking")
+
     const bookingsUrl = `${settings.resourcesUrl}/bookings`
     const booking = {
         user_id: user.value.id,
@@ -114,32 +88,36 @@ async function orderPayment(){
         booking_end: props.to
     }
     console.log('BookingDetailForm create booking: ', booking)
-    axios.post(bookingsUrl, booking)
+    try {
+        const response = await axios.post(bookingsUrl, booking);
+        console.log("Booking response data:", response.data);
+        console.log("Booking response data is:", response.data.id);
+        booking_id.value = response.data.id;
+        console.log('BookingDetailForm booked: ', booking_id);
+    } catch (error) {
+        console.error("Booking", error);
+        hideAll();
+        onErrorForm.value = true;
+        errorMessage.value = error.response.data;
+        return null;
+    }
+}
+
+const confirmBooking = () => {
+    console.log("confirmBooking()")
+    console.log("BookingID: ", booking_id)
+    const bookingsUrl = `${settings.resourcesUrl}/bookings/${booking_id.value}`
+    console.log('BookingDetailForm update booking: ', bookingsUrl)
+    const payload = {
+        'id': booking_id.value,
+        'booking_status': 'CONFIRMED'
+    }
+    axios.put(bookingsUrl, payload)
         .then((response) => {
-            console.log("Booking", response.data)
-            booking_id.value = response.data.id
-            console.log('BookingDetailForm booked: ', booking_id)
-        })
-        .then(() => {
-            const paymentData = {
-                'fullname': paymentDetails.value.fullname,
-                'number': paymentDetails.value.ccnumber,
-                'valid_to': paymentDetails.value.month + "/" + paymentDetails.value.year,
-                'ccv': paymentDetails.value.ccv,
-                'booking_id': booking_id
-            }
-            console.log('BookingWizard going to post: ', paymentData)
-            console.log('Paymnet is simulated!')
-            sleep(3000)
-                .then(() => {
-                    console.log('After Sleep')
-                    axios.put(bookingsUrl + '/' + booking_id)
-                        .then((response) => {
-                            console.log(response.data)
-                            hideAll()
-                            onSuccesForm.value = true
-                })
-            })
+            console.log("Booking confirm: ", response)
+            hideAll()
+            onSuccesForm.value = true
+            console.log('BookingDetailForm booked: ', booking_confirmation_id)
         })
         .catch((error) => {
             console.error("Booking", error)
@@ -149,6 +127,8 @@ async function orderPayment(){
             return
         })
 }
+
+onMounted(() => {getItemDetails()})
 
 </script>
 
@@ -177,10 +157,12 @@ async function orderPayment(){
                     <div id="button_row" class="btn-group" role="group">
                         <button v-if="onDetailsForm" id="canel-booking" type="button" class="btn btn-secondary btn-md"
                             @click="cancelBooking()">Annulla</button>
-                        <button v-if="onDetailsForm" id="to-payment" type="button" class="btn btn-primary"
-                            @click="hideAll(); onPaymentForm = true">Procedi al pagamento &gt;</button>
+                        <button v-if="onDetailsForm" id="to-payment" type="button" class="btn btn-success"
+                            @click="initBooking().then((resposne) => { confirmBooking() })"
+                            >Conferma</button>
                         </div>
 
+                    <!--
                     <BookingPaymentForm v-if="onPaymentForm" ref="paymentDetails" />
                     <div id="button_row" class="btn-group" role="group">
                         <button v-if="onPaymentForm" id="to-booking" type="button" class="btn btn-secondary btn-md"
@@ -188,21 +170,24 @@ async function orderPayment(){
                         <button v-if="onPaymentForm" id="confirm-payment" type="button" class="btn btn-warning"
                             @click="orderPayment">Conferma il pagamento ! </button>
 
-                        <BookingProcessing v-if="onProcessingForm" />
-
-                        <BookingSuccessful v-if="onSuccesForm" :id="booking_id" />
-
-                        <ErrorForm v-if="onErrorForm" :message="errorMessage">
-                            Vai su <a href="/manage" class="alert-link">"Gestiti prenotazioni"</a>.
-                        </ErrorForm>
-
+                    <BookingProcessing v-if="onProcessingForm" />
                     </div><!-- button_row -->
+                    <BookingSuccessful v-if="onSuccesForm" 
+                        :booking_id="booking_id"
+                        :item="item"
+                        :booking_from="from"
+                        :booking_to="to"
+                         />
+
+                    <ErrorForm v-if="onErrorForm" :message="errorMessage">
+                        Vai su <a href="/manage" class="alert-link">"Gestiti prenotazioni"</a>.
+                    </ErrorForm>
+
                 </div><!-- bw_form_card -->
             </div><!-- bw_col2 -->
         </div><!-- bw_row -->
     </div> <!-- bw_main -->
     <!-- END components/BookingWizard.vue -->
-     {{ paymentDetails  }}
 </template>
 
 <style lang="css" scoped>

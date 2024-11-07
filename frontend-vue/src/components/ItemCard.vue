@@ -2,7 +2,7 @@
 import ItemCardSmall from '../components/ItemCardSmall.vue'
 
 const props = defineProps(['item'])
-console.log("ItemCard props", props.item)
+// console.log("ItemCard props", props.item)
 </script>
 
 <template>

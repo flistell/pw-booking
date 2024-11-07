@@ -1,5 +1,6 @@
 import logging
 import pprint
+from pprint import pformat
 import datetime
 import json
 from booking import db
@@ -13,11 +14,11 @@ logger = logging.getLogger("Model")
 logger.setLevel(logging.DEBUG)
 
 # Booking statues
-NEW = 0
-BOOKED = 1      # Booked, waiting for payment
-CONFIRMED = 2   # Payment confirmed
-CANCELLED = -1 
-ERROR = 99
+NEW = 'NEW'
+BOOKED = 'BOOKED'      # Booked, waiting for payment
+CONFIRMED = 'CONFIRMED'   # Payment confirmed
+CANCELLED = 'CANCELLED' 
+ERROR = 'ERROR' 
 
 
 @resource
@@ -42,8 +43,12 @@ class Users(CollectionBase):
 class Booking(ResourceBase):
     _pkey = 'id'
     _tablename = 'booking'
-    _booking_statuses = ['new', 'booked', 'confirmed', 'cancelled']
-    _data = { 'booking_status': BOOKED }
+    _booking_statuses = [ NEW, BOOKED, CONFIRMED, CANCELLED, ERROR]
+    
+    def _booking_status(self, new_status=None):
+        if new_status and new_status in self._booking_statuses:
+            self._data['booking_status'] = new_status
+        return self._data.get('booking_status', None)
     
     def _check_parameters(self, **kwargs):
         logger.debug(type(self).__name__ + f"._check_parameters({kwargs})")
@@ -91,8 +96,8 @@ class Booking(ResourceBase):
         self._check_user(**self._data)
         self._check_item(**self._data)
         self._check_booking_conflict(**self._data)
-        if 'booking_status' not in self._data:
-            self._data
+        if not self._booking_status():
+            self._booking_status(BOOKED)
         
         sql_insert = f'''
         INSERT INTO {self._tablename}
@@ -110,16 +115,17 @@ class Booking(ResourceBase):
 
     def _confirm(self):
         logger.debug(type(self).__name__ + ".confirm()")
-        if self._booking_status != BOOKED:
-            raise ValueError(f"Transaction is in incopatible state. Expected BOOKED, found {self._booking_status}")
-        self._booking_status = CONFIRMED
+        logger.debug("Booking object: " + pformat(self._data))
+        if self._booking_status() != BOOKED:
+            raise ValueError(f"Transaction is in incopatible state. Expected BOOKED, found {self._booking_status()}")
+        self._data['booking_status'] = CONFIRMED
         ret = self._update_internal(booking_status=CONFIRMED)
-        if ret.rowcount != 1:
-            self._booking_status = BOOKED
+        if ret.get('rowcount', 0) != 1:
+            self._booking_status(BOOKED)
             raise RuntimeError("Something wen wrong while updating booking status.") 
         ret = {
             'id': self._id,
-            'booking_status': self._booking_status
+            'booking_status': self._data['booking_status']
         }
         return ret
 

@@ -28,7 +28,7 @@ export default {
         axios.get(path)
             .then((res) => {
                 this.items = res.data;
-                console.log(res.data);
+                // console.log(res.data);
             })
             .catch((error) => {
                 console.error(error);

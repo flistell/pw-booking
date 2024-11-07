@@ -1,8 +1,9 @@
 from booking.views.resources import bp
 from booking.models import registered_resources
 from booking.models import registered_collections
-from flask import jsonify, request
+from flask import jsonify, request, Response
 import logging
+import jwt
 from pprint import pformat
 
 logger = logging.getLogger(__name__)
@@ -22,6 +23,9 @@ def get_all(resource):
     if resource not in registered_collections:
         return "Resource not found", 404
     obj = registered_collections[resource]()
+    if 'token' in request.cookies:
+        decoded = jwt.decode(request.cookies['token'])
+        logger.debug(decoded)
     if not args:
         return jsonify(obj.get_all())
     result = obj.filter(**args)
@@ -67,13 +71,12 @@ def create(resource):
         return str(e), 403
     return jsonify({
             'kind': collection.kind(),
-            'id': obj_id}
-         )
+            'id': obj_id})
 
 
 @bp.route('/<resource>/<id>', methods=['PUT'])
-def update(resource):
-    logger.debug(f"PUT {resource}")
+def update(resource, id):
+    logger.debug(f"PUT {resource}/{id}")
     if resource not in registered_collections:
         return "Resource not found", 404
     content_type = request.headers.get('Content-Type')
@@ -82,7 +85,7 @@ def update(resource):
     data = request.json
     logger.debug(pformat(data))
     if 'id' not in data:
-        return jsonify({})
+        return jsonify({}), 500
     collection = registered_collections[resource]()
     obj = collection.get(id)
     obj.update(**data)

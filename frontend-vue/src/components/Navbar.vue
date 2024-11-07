@@ -32,14 +32,14 @@ const { user } = storeToRefs(authUserStore);
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
               <li class="dropdown-item"><i class="fas fa-sliders-h fa-fw"></i><i>{{ user.username }}</i></li>
-              <li><a class="dropdown-item" href="/manage"><i class="fas fa-sliders-h fa-fw"></i> Gestisci
+              <li><a class="dropdown-item" href="/bookings"><i class="fas fa-sliders-h fa-fw"></i> Gestisci
                   Prenotazioni</a></li>
               <li><a class="dropdown-item" href="#"><i class="fas fa-sliders-h fa-fw"></i> Account</a></li>
               <li><a class="dropdown-item" href="#"><i class="fas fa-cog fa-fw"></i> Settings</a></li>
               <li>
                 <hr class="dropdown-divider">
               </li>
-              <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt fa-fw"></i> Log Out</a></li>
+              <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt fa-fw"></i> Log Out</a></li>
             </ul>
           </li>
         </ul>

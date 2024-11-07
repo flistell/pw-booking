@@ -1,8 +1,9 @@
 import os
-from flask import Flask
+from flask import Flask, request
 from flask_cors import CORS
 from rich.logging import RichHandler
 import logging
+
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
@@ -33,15 +34,31 @@ def create_app(test_config=None):
 
     cors = CORS(app, resources={
         r"/resources/*": {"origins": "*"},
+        r"/resources/*/*": {"origins": "*"},
         r"/catalog/*": {"origins": "*"},
         r"/ping/*": {"origins": "*"},
         r"/login/*": {"origins": "*"},
         r"/payment/*": {"origins": "*"},
         })
     
-    @app.route('/ping')
+    @app.route('/ping', methods=['GET', 'POST'])
     def ping():
-        return 'pong!'
+        logging.debug("/ping")
+        logging.debug(request.headers)
+        h_dict = dict()
+        for k,v  in request.headers.items():
+            h_dict[k] = v
+        payload = ""
+        if request.is_json:
+            payload = request.get_json()
+        else:
+            payload = repr(request.get_data())
+        response = {
+            'request_headers': h_dict,
+            'request_cookies': request.cookies,
+            'request_payload': payload
+        }
+        return response
 
 
     from . import db

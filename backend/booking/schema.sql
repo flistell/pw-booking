@@ -117,27 +117,28 @@ CREATE TABLE location (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     country TEXT NOT NULL,
-    state TEXT NOT NULL,
+    region TEXT NOT NULL,
     city TEXT NOT NULL,
+    state TEXT NOT NULL,
     address_line1 TEXT NOT NULL,
     address_line2 TEXT NOT NULL,
     zip TEXT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES userprofile (id)
 );
-INSERT INTO location (user_id, country, state, city, address_line1, address_line2, zip) VALUES
-(1, 'Italia', 'Piemonte', 'Novara', 'Via XX Settembre, 34', 'Scala A, Piano 1', '28100'),
-(1, 'Italia', 'Piemonte', 'Alessandria', 'Corso Roma, 12', 'Piano Terra', '15121'),
-(1, 'Italia', 'Piemonte', 'Torino', 'Corso Vittorio Emanuele II, 8', 'Piano Terra', '10128'),
-(2, 'Italia', 'Lazio', 'Roma', 'Via del Corso, 22', 'Interno 3', '00187'),
-(3, 'Italia', 'Veneto', 'Venezia', 'Calle Larga XXII Marzo, 15', 'Piano 1', '30124'),
-(4, 'Italia', 'Toscana', 'Firenze', 'Piazza della Signoria, 5', 'Appartamento B', '50122'),
-(5, 'Italia', 'Campania', 'Napoli', 'Via Toledo, 50', 'Scala B, Piano 3', '80134'),
-(6, 'Italia', 'Lombardia', 'Milano', 'Via Roma, 10', 'Scala A, Piano 2', '20121'),
-(7, 'Italia', 'Sicilia', 'Palermo', 'Via Maqueda, 7', 'Interno 2', '90133'),
-(8, 'Italia', 'Emilia-Romagna', 'Bologna', 'Via Indipendenza, 45', 'Scala C, Piano 4', '40121'),
-(9, 'Italia', 'Liguria', 'Genova', 'Via Garibaldi, 12', 'Piano 1', '16124'),
-(10, 'Italia', 'Puglia', 'Bari', 'Corso Cavour, 18', 'Appartamento A', '70121'),
-(11, 'Italia', 'Sardegna', 'Cagliari', 'Via Roma, 3', 'Scala A, Piano 1', '09123');
+INSERT INTO location (user_id, country, region, city, state, address_line1, address_line2, zip) VALUES
+(1, 'Italia', 'Piemonte', 'Novara', 'NO', 'Via XX Settembre, 34', 'Scala A, Piano 1', '28100'),
+(1, 'Italia', 'Piemonte', 'Condove', 'TO', 'Corso Roma, 12', 'Piano Terra', '15121'),
+(1, 'Italia', 'Piemonte', 'Torino', 'TO', 'Corso Vittorio Emanuele II, 8', 'Piano Terra', '10128'),
+(2, 'Italia', 'Lazio', 'Roma', 'Roma', 'Via del Corso, 22', 'Interno 3', '00187'),
+(3, 'Italia', 'Veneto', 'Venezia', 'VE', 'Calle Larga XXII Marzo, 15', 'Piano 1', '30124'),
+(4, 'Italia', 'Toscana', 'Firenze', 'FI', 'Piazza della Signoria, 5', 'Appartamento B', '50122'),
+(5, 'Italia', 'Campania', 'Napoli', 'NA', 'Via Toledo, 50', 'Scala B, Piano 3', '80134'),
+(6, 'Italia', 'Lombardia', 'Milano', 'MI', 'Via Roma, 10', 'Scala A, Piano 2', '20121'),
+(7, 'Italia', 'Sicilia', 'Palermo', 'PA', 'Via Maqueda, 7', 'Interno 2', '90133'),
+(8, 'Italia', 'Emilia-Romagna', 'Bologna', 'BO', 'Via Indipendenza, 45', 'Scala C, Piano 4', '40121'),
+(9, 'Italia', 'Liguria', 'Genova', 'GE', 'Via Garibaldi, 12', 'Piano 1', '16124'),
+(10, 'Italia', 'Puglia', 'Bari', 'BA', 'Corso Cavour, 18', 'Appartamento A', '70121'),
+(11, 'Italia', 'Sardegna', 'Cagliari', 'CA', 'Via Roma, 3', 'Scala A, Piano 1', '09123');
 
 
 DROP TABLE IF EXISTS booking;

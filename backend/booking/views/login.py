@@ -2,7 +2,7 @@ import jwt
 from booking.models.resources import Users
 from datetime import datetime, timedelta
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for, jsonify, request, current_app
+    Blueprint, request, jsonify, request, current_app, make_response
 )
 import logging
 from pprint import pformat
@@ -16,7 +16,6 @@ logger = logging.getLogger(__name__)
 def login_jwt():
     data = request.get_json()
     email = data.get('email')
-    password = data.get('password')
     user = Users().find(mail_address=email)
     logger.debug(pformat(user))
     if not user or not user.authenticate(password=data['password']):
@@ -26,15 +25,18 @@ def login_jwt():
         'sub': user.get('mail_address'),
         'iat': datetime.utcnow(),
         'exp': datetime.utcnow() + timedelta(minutes=30)},
-        current_app.config['SECRET_KEY'])
+        current_app.config.get('SECRET_KEY'))
     logger.debug("token: " + token)
-    return jsonify({
+    response = make_response({
         'id': user.get('id'),
         'username': user.get('username'),
         'common_name': user.get('common_name'),
         'family_name': user.get('family_name'),
         'mail_address': user.get('mail_address'),
         'token': token })
+    response.set_cookie("Authorization", token)
+    logger.debug(response)
+    return response
 
 
 @bp.route('/authenticate', methods=('POST',))
