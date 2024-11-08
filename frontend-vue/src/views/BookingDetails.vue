@@ -9,16 +9,7 @@ const props = defineProps({
     booking_id: String
 })
 
-const item = ref({
-    item_details: {
-        brand: null,
-        model: null,
-        photo: null
-    }
-})
-
 const booking = ref({})
-
 
 console.log("booking id", props.booking_id)
 

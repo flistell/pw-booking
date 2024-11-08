@@ -4,7 +4,6 @@ import Items from '../components/Items.vue'
 import Item from '../components/Item.vue'
 import HomeView from '../views/HomeView.vue'
 import BookingWizard from '@/views/BookingWizard.vue'
-import CheckoutView from '@/views/CheckoutView.vue'
 import LoginView from '@/views/LoginView.vue'
 import LogoutView from '@/views/LogoutView.vue'
 import BookingAdmin from '@/views/BookingAdmin.vue'
@@ -45,11 +44,6 @@ export const router = createRouter({
       path: '/ping',
       name: 'ping',
       component: Ping
-    },
-    {
-      path: '/checkout',
-      name: 'CheckoutView',
-      component: CheckoutView
     },
     {
       path: '/book' ,

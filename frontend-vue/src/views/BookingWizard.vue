@@ -85,23 +85,22 @@ const initBooking = () => {
         booking_end: props.to
     }
     console.log('BookingDetailForm create booking: ', booking)
-        axios.post(bookingsUrl, booking)
-          .then((response) => {
+    axios.post(bookingsUrl, booking)
+        .then((response) => {
             console.log("Booking response data:", response.data);
             console.log("Booking response data is:", response.data.id);
             booking_id.value = response.data.id;
             console.log('BookingDetailForm booked: ', booking_id);
             resetForms();
-            onConfirmForm = true;
+            onConfirmForm.value = true;
         })
         .catch((error) => {
-        console.error("Booking", error);
-        alert(error)
-        resetForms();
-        onErrorForm.value = true;
-        errorMessage.value = error.response.data;
-        return null;
-    })
+            console.error("Booking", error);
+            alert(error)
+            resetForms();
+            onErrorForm.value = true;
+            errorMessage.value = error.response.data;
+        })
 }
 
 const confirmBooking = () => {
@@ -122,6 +121,7 @@ const confirmBooking = () => {
         })
         .catch((error) => {
             console.error("Booking", error)
+            alert(error)
             resetForms();
             onErrorForm.value = true;
             errorMessage.value = error.response.data
@@ -154,29 +154,39 @@ onMounted(() => {getItemDetails()})
             </div><!-- bw_col1 -->
             <div id="bw_col2" class="col-lg-8 mb-3 mb-lg-0">
                 <div id="bw_form_card" class="card shadow">
-                    <BookingUserForm v-if="onUserForm" :user_object="user"/>
-                    <BookingConfirmForm v-if="onConfirmForm" :bookind_id="booking_id"/>
+                    <BookingUserForm v-if="onUserForm" :user_object="user" />
+
+                    <BookingSuccessful v-if="onConfirmForm" 
+                        :item="item" 
+                        :booking_id="booking_id"
+                        :booking_from="props.from" 
+                        :booking_to="props.to"
+                        :status="'warning'">
+                        Conferma la tua prenotazione
+                    </BookingSuccessful>
+
+                    <BookingSuccessful v-if="onSuccesForm" 
+                        :item="item" 
+                        :booking_id="booking_id"
+                        :booking_from="props.from" 
+                        :booking_to="props.to"
+                        :status="'success'">
+                        La tua prenotazione è andata a buon fine.
+                    </BookingSuccessful>
+
+                    <ErrorForm v-if="onErrorForm" :message="errorMessage">
+                        Vai su <a href="/bookings" class="alert-link">"Gestiti prenotazioni"</a>.
+                    </ErrorForm>
+
                     <div id="button_row" class="btn-group" role="group">
                         <button v-if="onUserForm" id="cancel-booking" type="button" class="btn btn-secondary btn-md"
                             @click="cancelBooking()">Annulla</button>
                         <button v-if="onUserForm" id="to-payment" type="button" class="btn btn-primary"
-                            @click="initBooking()"
-                            >Continua</button>
+                            @click="initBooking()">Continua</button>
                         <button v-if="onConfirmForm" id="to-payment" type="button" class="btn btn-success"
-                            @click="confirmBooking()"
-                            >Conferma</button>
-                        </div>
+                            @click="confirmBooking()">Conferma</button>
+                    </div>
 
-                    <BookingSuccessful v-if="onSuccesForm" 
-                        :booking_id="booking_id"
-                        :item="item"
-                        :booking_from="fromDate"
-                        :booking_to="toDate"
-                         />
-
-                    <ErrorForm v-if="onErrorForm" :message="errorMessage">
-                        Vai su <a href="/manage" class="alert-link">"Gestiti prenotazioni"</a>.
-                    </ErrorForm>
 
                 </div><!-- bw_form_card -->
             </div><!-- bw_col2 -->

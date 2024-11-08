@@ -1,48 +1,69 @@
 <script setup>
-import { onMounted } from 'vue';
-
+import { ref,reactive, onMounted } from 'vue';
 
 const props = defineProps({
     item: Object,
-    booking_id: String,
-    fromDate: String,
-    toDate: String
+    booking_id: Number,
+    booking_from: String,
+    booking_to: String,
+    status: String
 })
 
-onMounted(() => { getBookingDetails(props.id) })
+const fromDate = new Date()
+fromDate.setTime(props.booking_from)
+
+const toDate = new Date()
+toDate.setTime(props.booking_to)
+
+const classObject = reactive({
+    'alert-success': false,
+    'alert-warning': true
+})
+
+const isSuccess = ref(true)
+const isWarning = ref(false)
+
+if (props.status == 'warning'){
+    console.log("qui")
+    isWarning.value = true
+    isSuccess.value = false
+}
+if (props.status == 'success'){
+    console.log("quo")
+    isSuccess.value = true
+    isWarning.value = false
+}
 
 </script>
 
 <template>
     <!-- BEGIN components/BookingSuccessful.vue -->
     <div class="card-body">
-        <h4>Prenotazione riuscita</h4>
-        <div class="row alert alert-success align-items-center justify-content-center" role="alert">
-            <div class="col-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="bi flex-shrink-0 me-2" viewBox="0 0 16 16" role="img"
-                    aria-label="Success:">
-                    <path
-                        d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                </svg>
-            </div>
-            <div class="col-6">
-                <p>La tua prenotazione è andata a buon fine.</p>
-                <p>Hai richiesto {{ item.item_details.brand }} {{ item.item_details.model }}</p>
+        <div :class="{ 'alert-success': isSuccess, 'alert-warning': isWarning}" class="row alert align-items-center justify-content-center" role="alert">
+            <div class="col-8">
+                <i v-if="isWarning" class="fa-solid fa-triangle-exclamation"/>
+                <i v-if="isSuccess" class="fa-solid fa-circle-check"/>
+                <h4>
+                <slot></slot>
+                </h4>
+                <i v-if="isWarning" class="fa-solid fa-triangle-exclamation"/>
+                <i v-if="isSuccess" class="fa-solid fa-circle-check"/>
+                <p>Hai richiesto {{ props.item.item_details.brand }} {{ props.item.item_details.model }}</p>
                 <hr>
-                <p>L'auto sarà a tua disposizione 
-                    dal {{ fromDate.toLocaleDateString('it-IT') }} 
+                <p>L'auto sarà a tua disposizione
+                    dal {{ fromDate.toLocaleDateString('it-IT') }}
                     al {{ toDate.toLocaleDateString('it-IT') }}.
                 </p>
                 <p>Potrai ritirare l'auto presso:</p>
-                    <ul>
-                        <li>{{ item.item_details.address_line1 }}</li>
-                        <li v-if="item.item_details.address_line2">{{ item.item_details.address_line2 }}</li>
-                        <li>{{ item.item_details.zip }} - {{ item.item_details.city }} 
-                            <span v-if="item.item_details.city != item.item_details.state"> </span>({{ item.item_details.state }})
-                            </li>
-                    </ul>
+                <ul>
+                    <li>{{ props.item.address_line1 }}</li>
+                    <li v-if="item.address_line2">{{ props.item.address_line2 }}</li>
+                    <li>{{ props.item.zip }} - {{ props.item.city }}
+                        <span v-if="item.city != props.item.state"> </span>({{ props.item.state }})
+                    </li>
+                </ul>
                 <hr>
-                <p>Il tuo codice prenotazione è il seguente "{{ booking_id }}."</p>
+                <p>Il tuo codice prenotazione è il seguente "{{ booking_id }}".</p>
             </div>
         </div>
     </div>
