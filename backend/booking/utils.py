@@ -2,8 +2,6 @@ from functools import wraps
 import jwt
 from flask import jsonify, request, current_app
 import logging
-from models.resources import Users, User
-
 logger = logging.getLogger(__name__)
 
 

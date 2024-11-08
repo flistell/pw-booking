@@ -19,6 +19,7 @@ def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET_KEY='dev',
+        JWT_ALG='HS256',
         DATABASE=os.path.join(DBFILE)
     )
     
@@ -38,7 +39,6 @@ def create_app(test_config=None):
         r"/catalog/*": {"origins": "http://localhost:5173"},
         r"/ping/*": {"origins": "http://localhost:5173"},
         r"/login/*": {"origins": "http://localhost:5173"},
-        r"/payment/*": {"origins": "http://localhost:5173"},
         },
         supports_credentials=True)
     
@@ -72,8 +72,8 @@ def create_app(test_config=None):
     import booking.views.resources as resources
     app.register_blueprint(resources.bp)
     
-    import booking.views.catalog as catalog
-    app.register_blueprint(catalog.bp)
+    #import booking.views.catalog as catalog
+    #app.register_blueprint(catalog.bp)
 
     import booking.views.login as login
     app.register_blueprint(login.bp)

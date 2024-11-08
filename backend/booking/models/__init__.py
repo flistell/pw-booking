@@ -1,13 +1,17 @@
 import logging
-from pprint import pformat, pprint
+import pprint
+from pprint import pformat
 from booking import db
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
-
 registered_resources = {}
 registered_collections = {}
+protected_resources = {}
+protected_collections = {}
+
+### DECORATORS ###
 
 def resource(c):
     registered_resources[c.__name__.lower()] = c
@@ -19,6 +23,20 @@ def collection(c):
     return c
 
 
+def protected_resource(c):
+    registered_resources[c.__name__.lower()] = c
+    protected_resources[c.__name__.lower()] = c
+    return c
+
+
+def protected_collection(c):
+    registered_collections[c.__name__.lower()] = c
+    protected_collections[c.__name__.lower()] = c
+    return c
+
+
+### UTILITY FUNCTIONS ###
+
 def _dict_factory(cursor, row, mapper=None):
     # sarebbe meglio avere qui un mapper che formatti in modo particolare
     # alcune righe, as esempio item_details come json
@@ -28,6 +46,8 @@ def _dict_factory(cursor, row, mapper=None):
     return d
 
 
+### BASE CLASSES ###
+
 class CollectionBase():
     _db = None
     _pkey = 'id'
@@ -35,12 +55,14 @@ class CollectionBase():
     _extra_operations = []
     _kind = object
     _query = "SELECT * FROM {tablename}"
+    _user_fkey = 'user_id'
 
     def __init__(self):
         logger.debug(self.__class__.__name__ + ".__init__")
         self._db = db.get_db()
         self._db.row_factory = _dict_factory
-        desc = self._db.execute(f"pragma table_info('{self._tablename}')").fetchall()
+        desc = self._db.execute(
+            f"pragma table_info('{self._tablename}')").fetchall()
         self._columns = [d['name'] for d in desc]
 
     def __call__(self, *args, **kwds):
@@ -63,6 +85,7 @@ class CollectionBase():
         return False
 
     def new_element(self, **kwargs):
+        logger.debug(f"{self.__class__.__name__}.new_element())")
         if self._kind:
             return self._kind(**kwargs)
 
@@ -72,7 +95,7 @@ class CollectionBase():
     def get(self, value):
         if self._kind:
             return self._kind(id=value)
-    
+
     def find(self, **kwargs):
         logger.debug(self.__class__.__name__ + f".filter({kwargs});")
         query_prefix = f"SELECT id FROM {self._tablename} WHERE "
@@ -87,16 +110,17 @@ class CollectionBase():
         logger.debug("resultset: " + pformat(resultset))
         result_obj = self._kind(id=resultset.get('id'))
         return result_obj
-    
-    
+
     def filter(self, **kwargs):
         logger.debug(self.__class__.__name__ + f".filter({kwargs});")
-        query_prefix = f"SELECT * FROM {self._tablename} WHERE "
+        query = f"SELECT * FROM {self._tablename} WHERE "
+        if 'user' in kwargs:
+            query = f"{query} {self._user_fkey} = '{kwargs['user']}'"
         query_where_list = set()
-        for p,v in kwargs.items():
+        for p, v in kwargs.items():
             if p in self._columns:
                 query_where_list.add(f"{p} LIKE '{v}'")
-        query = query_prefix + ' AND '.join(query_where_list)
+        query = query + ' AND '.join(query_where_list)
         logger.debug("query: " + query)
         cursor = self._db.execute(query)
         resultset = cursor.fetchall()
@@ -115,10 +139,10 @@ class ResourceBase():
     _extra_operations = []
     _collection = CollectionBase
     _id = None
-    #_query = "SELECT * FROM {self._tablename} WHERE {self._pkey} = {value}"
+    # _query = "SELECT * FROM {self._tablename} WHERE {self._pkey} = {value}"
     _query = "SELECT * FROM {tablename} WHERE {pkey} = {value}"
-    _data = dict() # contains data to/from table
-    
+    _data = dict()  # contains data to/from table
+
     def __init__(self, id=None, data=dict()):
         logger.debug(self.__class__.__name__ + ".__init__")
         self._db = db.get_db()
@@ -130,7 +154,8 @@ class ResourceBase():
             raise ValueError(
                 "'id' and 'data' argument cannot be used together.")
         if id and not data:  # Read object from table
-            query = self._query.format(tablename=self._tablename, pkey=self._pkey, value=id)
+            query = self._query.format(
+                tablename=self._tablename, pkey=self._pkey, value=id)
             self._data = self._format(self._from_table(id, query))
             self._id = self._data[self._pkey]
             logger.debug("Object read from table: " + pformat(self._data))
@@ -142,7 +167,7 @@ class ResourceBase():
         logger.debug("Object: " + pformat(self.serialize()))
 
     def _format(self, data):
-        return data        
+        return data
 
     def _from_table(self, value, query=None):
         logger.debug("query: " + query)
@@ -162,10 +187,10 @@ class ResourceBase():
 
     def save(self, **kwargs):
         raise NotImplementedError
-    
+
     def update(self, **kwargs):
         raise NotImplementedError
-    
+
     def get_id(self):
         return self._id
 
@@ -176,4 +201,4 @@ class ResourceBase():
 CollectionBase._kind = ResourceBase
 
 from . import resources
-from . import catalog
+from . import bookings

@@ -1,10 +1,12 @@
 from booking.views.resources import bp
 from booking.models import registered_resources
 from booking.models import registered_collections
-from flask import jsonify, request, Response
-import logging
-import jwt
+from booking.models import protected_collections
+from booking.models.resources import Users, User
+from flask import jsonify, request, make_response
+import logging  
 from pprint import pformat
+from booking.security import validate_token
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -20,15 +22,29 @@ def list_resources():
 def get_all(resource):
     args = request.args.to_dict()
     logger.debug(f"GET {resource} {args}")
-    if resource not in registered_collections:
-        return "Resource not found", 404
-    obj = registered_collections[resource]()
-    if 'token' in request.cookies:
-        decoded = jwt.decode(request.cookies['token'])
-        logger.debug(decoded)
-    if not args:
-        return jsonify(obj.get_all())
-    result = obj.filter(**args)
+    obj = None
+    if resource in protected_collections:
+        try:
+            user_id = validate_token(request)
+            logger.debug("Found authenticated user: " + repr(user_id))
+            obj = protected_collections[resource]()
+            # Istruisco la baking class per filtrare i risultati 
+            # usando l'utente autenticato
+            result = obj.filter(user=user_id, **args)
+        except RuntimeError as e:
+            logger.error(e)
+            return jsonify({
+                'message': repr(e),
+                'authenticated': False
+            }), 401
+    elif resource in registered_collections:
+        obj = registered_collections[resource]()
+        if args:
+            result = obj.filter(**args)
+        else:
+            result = obj.get_all()
+    else:
+        return f"Resource '{resource}' not found.", 404
     return jsonify(result)
 
 
@@ -87,6 +103,10 @@ def update(resource, id):
     if 'id' not in data:
         return jsonify({}), 500
     collection = registered_collections[resource]()
+    logger.debug(collection)
     obj = collection.get(id)
-    obj.update(**data)
+    try:
+        obj.update(**data)
+    except Exception as e:
+        return str(e), 409
     return jsonify({})

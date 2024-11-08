@@ -21,11 +21,15 @@ def login_jwt():
     if not user or not user.authenticate(password=data['password']):
         return jsonify({'message': 'Invalid credentials', 'authenticated': False}), 401
 
+    exp =  datetime.utcnow() + timedelta(hours=8)
     token = jwt.encode({
         'sub': user.get('mail_address'),
         'iat': datetime.utcnow(),
-        'exp': datetime.utcnow() + timedelta(minutes=30)},
-        current_app.config.get('SECRET_KEY'))
+        'exp': exp
+        },
+        key=current_app.config.get('SECRET_KEY'),
+        algorithm=current_app.config.get('JWT_ALG')
+    )
     logger.debug("token: " + token)
     response = make_response({
         'id': user.get('id'),
