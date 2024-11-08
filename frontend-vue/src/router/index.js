@@ -6,8 +6,10 @@ import HomeView from '../views/HomeView.vue'
 import BookingWizard from '@/views/BookingWizard.vue'
 import CheckoutView from '@/views/CheckoutView.vue'
 import LoginView from '@/views/LoginView.vue'
+import LogoutView from '@/views/LogoutView.vue'
 import BookingAdmin from '@/views/BookingAdmin.vue'
 import AboutView from '@/views/AboutView.vue'
+import ErrorView from '@/views/ErrorView.vue'
 import { myAuthStore } from '@/stores/authUserStore'
 
 export const router = createRouter({
@@ -27,7 +29,7 @@ export const router = createRouter({
     {
       path: '/logout',
       name: 'logout',
-      component: LoginView
+      component: LogoutView
     },
     {
       path: '/items',
@@ -69,17 +71,23 @@ export const router = createRouter({
       name: 'BookingAdmin',
       component: BookingAdmin
     },
+    
     {
       path: '/debug',
       name: 'AboutView',
       component: AboutView
+    },
+    {
+      path: '/error',
+      name: 'ErrorView',
+      component: ErrorView,
     },
     { path: '/:pathMatch(.*)*', redirect: '/' }
   ]
 });
 
 router.beforeEach(async (to) => {
-  const publicPages = [ '/login' ]
+  const publicPages = [ '/login', '/logout' ]
   const authRequired = !publicPages.includes(to.path);
   const authUserStore = myAuthStore();
 

@@ -1,27 +1,22 @@
 <script setup>
-import { defineProps, ref, reactive, onMounted } from 'vue'
-import axios from 'axios'
-import { settings } from '@/assets/data/settings.js'
-import { storeToRefs } from 'pinia';
-import { myAuthStore } from '@/stores/authUserStore'
-
-console.log("BookingDetailsForm")
-const authUserStore = myAuthStore();
-const { user } = storeToRefs(authUserStore);
+import { onMounted, ref } from 'vue';
 
 const props = defineProps({
-    id: String,
-    from: String,
-    to: String
+    user_object: Object
 })
 
+const user = ref({})
+
+onMounted(()=>{
+    user.value = props.user_object
+})
 
 </script>
 
 <template>
-    <!-- BEGIN components/BookingDetailsForm.vue -->
+    <!-- BEGIN components/BookingUserForm.vue -->
     <div class="card-body">
-        <h4>Dettagli della prenotazione.</h4>
+        <h4>Dettagli utente.</h4>
         <form id="BookingWizardForm">
             <div id="bwf_div1" class="mb-3">
                 <label for="bwf_userid" class="form-label">User ID</label>
@@ -40,11 +35,7 @@ const props = defineProps({
                 <input id="bwf_email" type="email" class="form-control" :value="user.mail_address" required readony
                     disabled>
             </div> <!-- bwf_div1 -->
-            <!--
-            <button class="btn btn-primary" type="submit" data-bs-target="#paymentForm"
-                @click.prevent="initTransaction()">Procedi al pagamento</button>
-            -->
         </form>
     </div>
-    <!-- BEGIN components/BookingDetailsForm.vue -->
+    <!-- BEGIN components/BookingUserForm.vue -->
 </template>

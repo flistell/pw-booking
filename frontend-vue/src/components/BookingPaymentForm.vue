@@ -49,5 +49,5 @@ defineExpose({
         </form>
         {{ fullname }}
     </div>
-    <!-- BEGIN components/BookingDetailsForm.vue -->
+    <!-- BEGIN components/BookingUserForm.vue -->
 </template>

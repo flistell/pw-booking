@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, ref, onMounted } from 'vue';
+import { onMounted } from 'vue';
 
 
 const props = defineProps({
@@ -8,12 +8,6 @@ const props = defineProps({
     fromDate: String,
     toDate: String
 })
-
-const booking = ref({})
-
-const getBookingDetails = (id) => {
-    console.log("getBookingDetails(" + id + ")")
-}
 
 onMounted(() => { getBookingDetails(props.id) })
 
@@ -40,7 +34,6 @@ onMounted(() => { getBookingDetails(props.id) })
                     al {{ toDate.toLocaleDateString('it-IT') }}.
                 </p>
                 <p>Potrai ritirare l'auto presso:</p>
-                <p>
                     <ul>
                         <li>{{ item.item_details.address_line1 }}</li>
                         <li v-if="item.item_details.address_line2">{{ item.item_details.address_line2 }}</li>
@@ -48,7 +41,6 @@ onMounted(() => { getBookingDetails(props.id) })
                             <span v-if="item.item_details.city != item.item_details.state"> </span>({{ item.item_details.state }})
                             </li>
                     </ul>
-                </p>
                 <hr>
                 <p>Il tuo codice prenotazione è il seguente "{{ booking_id }}."</p>
             </div>

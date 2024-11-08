@@ -19,13 +19,27 @@ const getBookings = () => {
         })
         .catch((error) => {
             console.error(error);
+            if (error.status == 401){
+                router.push({
+                    path: '/logout'
+                })  
+            } else {
+                router.push({
+                    path: '/error/'
+                })
+            }
         })
     }
 
-const openDetails = () => {
-    router.push({
-        path: '/bookings'
-    })
+const activeBookingsDetailsModal = ref(false)
+
+const booking_id = ref()
+
+const openDetails = (id) => {
+    console.log("openDetails(): " + id )
+    router.push(
+        `/bookings/${id}`
+    )
 }
 
 
@@ -34,7 +48,7 @@ onMounted(() => { getBookings() })
 </script>
 <template>
     <!-- BEGIN views/BookingAdmin -->
-    <div class="container">
+    <div class="d-flex">
         <div class="row">
             <div class="col-sm-10">
                 <h1>Bookings</h1>
@@ -66,7 +80,8 @@ onMounted(() => { getBookings() })
                             </td>
                             <td>
                                 <div class="btn-group" role="group">
-                                    <button type="button" @onclick="openDetails" class="btn btn-primary btn-sm">Details</button>
+                                    <button type="button" @click="toggleDetails(booking.id)"
+                                        class="btn btn-primary btn-sm">Details</button>
                                     <button type="button" class="btn btn-warning btn-sm">Update</button>
                                     <button type="button" class="btn btn-danger btn-sm">Cancel</button>
                                 </div>
