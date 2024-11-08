@@ -8,7 +8,6 @@ import CheckoutView from '@/views/CheckoutView.vue'
 import LoginView from '@/views/LoginView.vue'
 import BookingAdmin from '@/views/BookingAdmin.vue'
 import AboutView from '@/views/AboutView.vue'
-import LogoutView from '@/views/LogoutView.vue'
 import { myAuthStore } from '@/stores/authUserStore'
 
 export const router = createRouter({
@@ -28,7 +27,7 @@ export const router = createRouter({
     {
       path: '/logout',
       name: 'logout',
-      component: LogoutView
+      component: LoginView
     },
     {
       path: '/items',
@@ -66,7 +65,12 @@ export const router = createRouter({
       component: BookingAdmin
     },
     {
-      path: '/about',
+      path: '/bookings',
+      name: 'BookingAdmin',
+      component: BookingAdmin
+    },
+    {
+      path: '/debug',
       name: 'AboutView',
       component: AboutView
     },

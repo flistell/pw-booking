@@ -15,10 +15,13 @@ export const myAuthStore = defineStore({
     actions: {
         login(email, password) {
             axios
-                .post( `${baseUrl}/login/jwt`, { 
+                .post( 
+                    `${baseUrl}/login/jwt`, 
+                    { 
                         'email': email,
                         'password': password
-                    }
+                    },
+                    { withCredentials: true }
                 )
                 .then((response) => {
                     console.log(response)

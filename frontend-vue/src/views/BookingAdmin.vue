@@ -4,13 +4,15 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router'
 import axios from 'axios';
 
-const router = userRouter()
+const router = useRouter()
 const bookings = ref([])
 
 const getBookings = () => {
     const url = `${settings.resourcesUrl}/bookings`
-    axios.get(url)
-
+    axios.get(
+        url,
+        { withCredentials: true}
+        )
         .then((response) => {
             bookings.value = response.data;
             console.log(response.data);

@@ -15,7 +15,9 @@ const ping = () => {
   axios.post(
     url,
     payload,
-    { headers: authHeader() }
+    { headers: authHeader(),
+      withCredentials: true
+     }
   ).then((response) => {
     console.log("response.data", response.data)
     data.value = response.data

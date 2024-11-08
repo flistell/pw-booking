@@ -33,21 +33,26 @@ def create_app(test_config=None):
         pass
 
     cors = CORS(app, resources={
-        r"/resources/*": {"origins": "*"},
-        r"/resources/*/*": {"origins": "*"},
-        r"/catalog/*": {"origins": "*"},
-        r"/ping/*": {"origins": "*"},
-        r"/login/*": {"origins": "*"},
-        r"/payment/*": {"origins": "*"},
-        })
+        r"/resources/*": {"origins": "http://localhost:5173"},
+        r"/resources/*/*": {"origins": "http://localhost:5173"},
+        r"/catalog/*": {"origins": "http://localhost:5173"},
+        r"/ping/*": {"origins": "http://localhost:5173"},
+        r"/login/*": {"origins": "http://localhost:5173"},
+        r"/payment/*": {"origins": "http://localhost:5173"},
+        },
+        supports_credentials=True)
     
     @app.route('/ping', methods=['GET', 'POST'])
     def ping():
         logging.debug("/ping")
         logging.debug(request.headers)
+        logging.debug(request.cookies)
         h_dict = dict()
         for k,v  in request.headers.items():
             h_dict[k] = v
+        c_dict = dict()
+        for k,v in request.cookies.items():
+            c_dict[k] = v
         payload = ""
         if request.is_json:
             payload = request.get_json()
@@ -55,7 +60,7 @@ def create_app(test_config=None):
             payload = repr(request.get_data())
         response = {
             'request_headers': h_dict,
-            'request_cookies': request.cookies,
+            'request_cookies': c_dict,
             'request_payload': payload
         }
         return response

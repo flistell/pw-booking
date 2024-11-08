@@ -34,8 +34,7 @@ const { user } = storeToRefs(authUserStore);
               <li class="dropdown-item"><i class="fas fa-sliders-h fa-fw"></i><i>{{ user.username }}</i></li>
               <li><a class="dropdown-item" href="/bookings"><i class="fas fa-sliders-h fa-fw"></i> Gestisci
                   Prenotazioni</a></li>
-              <li><a class="dropdown-item" href="#"><i class="fas fa-sliders-h fa-fw"></i> Account</a></li>
-              <li><a class="dropdown-item" href="#"><i class="fas fa-cog fa-fw"></i> Settings</a></li>
+              <li><a class="dropdown-item" href="/debug"><i class="fas fa-sliders-h fa-fw"></i> Account</a></li>
               <li>
                 <hr class="dropdown-divider">
               </li>

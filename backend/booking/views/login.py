@@ -34,8 +34,8 @@ def login_jwt():
         'family_name': user.get('family_name'),
         'mail_address': user.get('mail_address'),
         'token': token })
-    response.set_cookie("Authorization", token)
-    logger.debug(response)
+    response.set_cookie("Authorization", value=token, domain="localhost")
+    logger.debug("response:" + repr(response))
     return response
 
 
