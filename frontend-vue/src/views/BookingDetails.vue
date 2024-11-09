@@ -1,26 +1,30 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import axios from 'axios';
+import { useRoute } from 'vue-router'
 import { settings } from '@/assets/data/settings.js';
 import BookingUserForm from '@/components/BookingUserForm.vue';
 import ItemCardSmall from '@/components/ItemCardSmall.vue';
 
-const props = defineProps({
-    booking_id: String
-})
-
+const route = useRoute()
 const booking = ref({})
+const item = ref({})
+const booking_id = ref()
+const user = ref({})
 
-console.log("booking id", props.booking_id)
+booking_id.value = route.params.booking_id
 
-const fromDate = ref(new Date())
-const toDate = ref(new Date())
+console.log("booking id", booking_id.value)
+
+const fromDate = new Date()
+const toDate = new Date()
 // Functions
 
 const getBookingDetails = (booking_id) => {
+    console.log("getBookingDetails")
     const url = settings.resourcesUrl + '/bookings/' + booking_id
     console.log(url)
-    axios.get(
+    return axios.get(
         url,
         { withCredentials: true }
     )
@@ -29,7 +33,9 @@ const getBookingDetails = (booking_id) => {
             console.log(booking.value)
             fromDate.setTime(booking.value.booking_start)
             toDate.setTime(booking.value.booking_end)
-            getItemDetails(booking.value.booked_item_id)
+            console.log("booking: ", booking.value)
+            console.log("booked item: ", booking.value.booked_item_id)
+            console.log("after")
         })
         .catch((error) => {
             console.log(error)
@@ -37,12 +43,14 @@ const getBookingDetails = (booking_id) => {
         })
 }
 
-
 const getItemDetails = (item_id) => {
+    console.log("getItemDetails")
     const url = `${settings.resourcesUrl}/items/${item_id}`
     console.log("url", url)
-    axios
-        .get(url)
+    return axios.get(
+            url,
+            { withCredentials: true }
+        )
         .then((response) => {
             console.log(response);
             item.value = response.data;
@@ -52,40 +60,41 @@ const getItemDetails = (item_id) => {
         });
 }
 
-onMounted(() => { 
-    getBookingDetails(props.booking_id);
- })
+const getUserDetails = (user_id) => {
+    console.log("getUserDetails")
+    const url = `${settings.resourcesUrl}/users/${user_id}`
+    console.log("url", url)
+    return axios.get(
+        url,
+        { withCredentials: true }
+    )
+        .then((response) => {
+            console.log(response);
+            user.value = response.data;
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+}
 
+onMounted(() => { 
+    // Promise chaining
+    getBookingDetails(booking_id.value)
+    .then(result => getItemDetails(booking.value.booked_item_id))
+    .then(result => getUserDetails(booking.value.user_id))
+})
 
 
 </script>
 
 <template>
+    {{ booking }}
+    <hr>
+    {{ item }}
+    <hr>
+    {{ user }}
     <!-- BEGIN components/BookingWizard.vue -->
-    <div id="bw_main">
-        <div id="bw_row" class="row align-items-start">
-            <div id="bw_col1" class="card col-lg-4 sticky p-lg-0">
-                <ItemCardSmall :brand="item.item_details.brand" :model="item.item_details.model"
-                    :photo="item.item_details.photo" />
-                <ul>
-                    <li>
-                        <b>Data di ritiro:</b> {{ fromDate.toLocaleDateString('it-IT') }}
-                    </li>
-                    <li>
-                        <b>Data di restituzione</b>: {{ toDate.toLocaleDateString('it-IT') }}
-                    </li>
-                    <li v-if="booking_id">
-                        <b>Codice di prenotazione</b>: {{ booking_id }}
-                    </li>
-                </ul>
-            </div><!-- bw_col1 -->
-            <div id="bw_col2" class="col-lg-8 mb-3 mb-lg-0">
-                <div id="bw_form_card" class="card shadow">
-                    <BookingUserForm :id="booking_" :from="from" :to="to" />
-                </div><!-- bw_form_card -->
-            </div><!-- bw_col2 -->
-        </div><!-- bw_row -->
-    </div> <!-- bw_main -->
+
     <!-- END components/BookingWizard.vue -->
 </template>
 

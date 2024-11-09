@@ -80,7 +80,7 @@ onMounted(() => { getBookings() })
                             </td>
                             <td>
                                 <div class="btn-group" role="group">
-                                    <button type="button" @click="toggleDetails(booking.id)"
+                                    <button type="button" @click="openDetails(booking.id)"
                                         class="btn btn-primary btn-sm">Details</button>
                                     <button type="button" class="btn btn-warning btn-sm">Update</button>
                                     <button type="button" class="btn btn-danger btn-sm">Cancel</button>
