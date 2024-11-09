@@ -7,7 +7,7 @@ console.log("CredicCardDialog:", show)
 
 <template>
     <!-- BEGIN compoenents/PaymentDialog.vue -->
-        <div class="modal fade" 
+        <div class="modal modal-sheet fade" 
             id="cc-form-modal" 
             data-bs-backdrop="static" 
             data-bs-keyboard="false" 
