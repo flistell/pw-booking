@@ -2,7 +2,6 @@
 import { RouterLink, RouterView } from 'vue-router'
 import Navbar from '@/components/Navbar.vue'
 import Sidebar from '@/components/Sidebar.vue'
-import { myAuthStore } from '@/stores/authUserStore';
 
 </script>
 

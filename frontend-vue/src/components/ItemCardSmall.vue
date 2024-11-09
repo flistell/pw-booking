@@ -7,7 +7,7 @@ const props = defineProps({
 </script>
 
 <template>
-    <div id="item_card_small" class="card">
+    <div id="item_card_small" class="card-body">
     <!-- BEGIN components/ItemCardSmall.vue-->
         <div>
             <h2 class="card-title">{{ brand }} {{ model }}</h2>

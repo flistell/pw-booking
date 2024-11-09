@@ -3,13 +3,10 @@ import pprint
 from pprint import pformat
 import datetime
 import json
-from booking import db
 from . import CollectionBase
 from . import ResourceBase
 from . import resource
 from . import collection
-from . import _dict_factory
-from booking.utils import protected
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +32,22 @@ class Item(ResourceBase):
     _pkey = 'id'
     _tablename = 'catalog'
     _extra_operations = [ 'is_available' ]
-    _query = "select *,c.id AS id FROM catalog c INNER JOIN location l on c.item_location_id = l.id WHERE c.id = {value}"
+    _query = '''SELECT 
+        c.id AS id,
+        c.item_type,
+        c.item_details,
+        l.country,
+        l.region,
+        l.city,
+        l.state,
+        l.address_line1,
+        l.address_line2,
+        l.zip,
+        u.username AS owner
+        FROM catalog c 
+        INNER JOIN location l ON c.item_location_id = l.id 
+        INNER JOIN userprofile u ON c.item_owner_id = u.id
+        WHERE c.id = {value}'''
     
     def is_available(self, **kwargs):
         query = '''
