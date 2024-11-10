@@ -3,7 +3,6 @@ import pprint
 from pprint import pformat
 from . import CollectionBase
 from . import ResourceBase
-from . import protected_collection
 from . import protected_resource
 from booking.models.resources import User, Users, Item, Items
 
@@ -163,8 +162,29 @@ class Booking(ResourceBase):
         logger.debug(f"updated '{cur.rowcount}' rows.")
         return ret
 
+    def delete(self):
+        logger.debug(type(self).__name__ + f".delete()")
+        return self._cancel()
 
-@protected_collection
+    def _cancel(self):
+        logger.debug(type(self).__name__ + ".cancel(**kwargs)")
+        booking_status_old = self._booking_status()
+        self._data['booking_status'] = CANCELLED
+        ret_internal = self._update_internal(booking_status=CANCELLED)
+        if ret_internal.get('rowcount', 0) != 1:
+            self._booking_status(booking_status_old)
+            raise RuntimeError(
+                "Something went wrong while updating booking status.")
+        ret = {
+            'id': self._id,
+            'user': self._data.get('user_id'),
+            'booking_status': self._data['booking_status'],
+        }
+        return ret
+
+
+@protected_resource
 class Bookings(CollectionBase):
     _tablename = "booking"
     _kind = Booking
+    _user_fkey = 'user_id'

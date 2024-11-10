@@ -6,7 +6,6 @@ import json
 from . import CollectionBase
 from . import ResourceBase
 from . import resource
-from . import collection
 
 logger = logging.getLogger(__name__)
 
@@ -21,8 +20,11 @@ class User(ResourceBase):
             return True
         return False
 
+    def can_access(self, resource: ResourceBase) -> bool:
+        pass
+        
 
-@collection
+@resource
 class Users(CollectionBase):
     _tablename = "userprofile"
     _kind = User
@@ -74,7 +76,7 @@ class Item(ResourceBase):
         return data
 
 
-@collection
+@resource
 class Items(CollectionBase):
     _tablename = "catalog"
     _kind = Item

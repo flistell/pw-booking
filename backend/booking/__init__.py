@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 from flask_cors import CORS
 from rich.logging import RichHandler
 import logging
@@ -65,6 +65,10 @@ def create_app(test_config=None):
         }
         return response
 
+    @app.route('/favicon.ico')
+    def favicon():
+        return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
     from . import db
     db.init_app(app)

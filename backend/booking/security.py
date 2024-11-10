@@ -22,7 +22,7 @@ def validate_token(request):
         user = Users().find(mail_address=sub)
         if not user:
             raise RuntimeError("User not found")
-        return user.get_id()
+        return user
     except jwt.ExpiredSignatureError:
         raise RuntimeError('Expired token.')
     except (jwt.InvalidTokenError, Exception) as e:

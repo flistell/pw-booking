@@ -7,9 +7,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
 registered_resources = {}
-registered_collections = {}
 protected_resources = {}
-protected_collections = {}
 
 ### DECORATORS ###
 
@@ -18,20 +16,9 @@ def resource(c):
     return c
 
 
-def collection(c):
-    registered_collections[c.__name__.lower()] = c
-    return c
-
-
 def protected_resource(c):
     registered_resources[c.__name__.lower()] = c
     protected_resources[c.__name__.lower()] = c
-    return c
-
-
-def protected_collection(c):
-    registered_collections[c.__name__.lower()] = c
-    protected_collections[c.__name__.lower()] = c
     return c
 
 
@@ -127,6 +114,10 @@ class CollectionBase():
         logger.debug("resultset: " + pformat(resultset))
         return resultset
 
+    def delete(self, **kwargs):
+        raise NotImplementedError
+
+
     # def add(self, **kwargs):
     #     logger.debug(self.__class__.__name__ + f".add({kwargs});")
     #     return { 'query': query }
@@ -142,6 +133,8 @@ class ResourceBase():
     # _query = "SELECT * FROM {self._tablename} WHERE {self._pkey} = {value}"
     _query = "SELECT * FROM {tablename} WHERE {pkey} = {value}"
     _data = dict()  # contains data to/from table
+    _owner = None
+    _user_fkey = 'user_id'
 
     def __init__(self, id=None, data=dict()):
         logger.debug(self.__class__.__name__ + ".__init__")
@@ -185,6 +178,12 @@ class ResourceBase():
         else:
             return None
 
+    def owned_by(self, user_id):
+        logger.debug(self.__class__.__name__ + f".owned_by({user_id})")
+        if self._data.get(self._user_fkey, False) == user_id:
+            return True
+        return False
+
     def save(self, **kwargs):
         raise NotImplementedError
 
@@ -196,6 +195,9 @@ class ResourceBase():
 
     def get(self, attribute):
         return self._data.get(attribute, None)
+
+    def delete(self, **kwargs):
+        raise NotImplementedError
 
 
 CollectionBase._kind = ResourceBase
