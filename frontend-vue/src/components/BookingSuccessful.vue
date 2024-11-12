@@ -41,13 +41,9 @@ if (props.status == 'success'){
     <div class="card-body">
         <div :class="{ 'alert-success': isSuccess, 'alert-warning': isWarning}" class="row alert align-items-center justify-content-center" role="alert">
             <div class="col-8">
-                <i v-if="isWarning" class="fa-solid fa-triangle-exclamation"/>
-                <i v-if="isSuccess" class="fa-solid fa-circle-check"/>
-                <h4>
-                <slot></slot>
-                </h4>
-                <i v-if="isWarning" class="fa-solid fa-triangle-exclamation"/>
-                <i v-if="isSuccess" class="fa-solid fa-circle-check"/>
+                <i v-if="isWarning" class="fa-solid fa-triangle-exclamation"/> <i v-if="isSuccess" class="fa-solid fa-circle-check"/> <h4>
+                <slot name="title"></slot>
+                </h4> <i v-if="isWarning" class="fa-solid fa-triangle-exclamation"/> <i v-if="isSuccess" class="fa-solid fa-circle-check"/>
                 <p>Hai richiesto {{ props.item.item_details.brand }} {{ props.item.item_details.model }}</p>
                 <hr>
                 <p>L'auto sarà a tua disposizione
@@ -64,6 +60,7 @@ if (props.status == 'success'){
                 </ul>
                 <hr>
                 <p>Il tuo codice prenotazione è il seguente "{{ booking_id }}".</p>
+                <slot name="message"></slot>
             </div>
         </div>
     </div>

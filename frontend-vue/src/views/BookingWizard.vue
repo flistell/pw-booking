@@ -85,7 +85,11 @@ const initBooking = () => {
         booking_end: props.to
     }
     console.log('BookingDetailForm create booking: ', booking)
-    axios.post(bookingsUrl, booking)
+    axios.post(
+        bookingsUrl, 
+        booking,
+        { withCredentials: true }
+        )
         .then((response) => {
             console.log("Booking response data:", response.data);
             console.log("Booking response data is:", response.data.id);
@@ -112,7 +116,11 @@ const confirmBooking = () => {
         'id': booking_id.value,
         'booking_status': 'CONFIRMED'
     }
-    axios.put(bookingsUrl, payload)
+    axios.put(
+        bookingsUrl, 
+        payload,
+        { withCredentials: true }
+        )
         .then((response) => {
             console.log("Booking confirm: ", response)
             resetForms()

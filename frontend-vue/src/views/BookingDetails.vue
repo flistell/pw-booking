@@ -6,6 +6,8 @@ import { settings } from '@/assets/data/settings.js';
 import ItemCardSmall from '@/components/ItemCardSmall.vue';
 import Datepicker from 'vue3-datepicker'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import BookingSuccessful from '@/components/BookingSuccessful.vue';
+import ErrorForm from '@/components/ErrorForm.vue';
 
 const props = defineProps({
     canModify: {
@@ -14,7 +16,7 @@ const props = defineProps({
     }
 })
 
-const show = ref(false)
+const onModify = ref(false)
 
 const route = useRoute()
 const booking = ref({})
@@ -30,11 +32,16 @@ booking_id.value = route.params.booking_id
 
 const fromDate = ref(new Date())
 const toDate = ref(new Date())
-
 const fromDateNew = ref(new Date())
 const toDateNew = ref(new Date())
-const today = ref(new Date());
+const onSuccesForm = ref(false)
+const onErrorForm = ref(false)
+const errorMessage = ref("")
 
+const resetForms = () => {
+    onSuccesForm.value = false
+    onErrorForm.value = false
+}
 
 // Functions
 
@@ -110,15 +117,25 @@ const updateBooking = () => {
     const bookingsUrl = `${settings.resourcesUrl}/bookings/${booking_id.value}`
     console.log('BookingDetailForm update booking: ', bookingsUrl)
     const payload = {
-        'id': booking_id.value,
-        'booking_status': 'CONFIRMED'
+        id: Number(booking_id.value),
+        booking_start: fromDateNew.value.getTime(),
+        booking_end: toDateNew.value.getTime()
     }
-    axios.put(bookingsUrl, payload)
+    console.log('payload', payload)
+    onModify.value = false
+    axios.put(
+        bookingsUrl, 
+        payload,
+        { withCredentials: true }
+        )
         .then((response) => {
             console.log("Booking confirm: ", response)
+            console.log('BookingDetailForm booked: ', response.data)
             resetForms()
             onSuccesForm.value = true
-            console.log('BookingDetailForm booked: ', booking_confirmation_id)
+            fromDate.value = fromDateNew.value
+            toDate.value = toDateNew.value
+            onModify.value = false
         })
         .catch((error) => {
             console.error("Booking", error)
@@ -151,7 +168,7 @@ onMounted(() => {
         // this is to assure datepicker shows correct date from booking
         nextTick().then( () =>{
             if (props.canModify == 'true'){
-                show.value = true
+                onModify.value = true
             }
         })
     })
@@ -168,8 +185,18 @@ onMounted(() => {
                 <ItemCardSmall :brand="item.item_details.brand" :model="item.item_details.model"
                     :photo="item.item_details.photo" />
             </div>
-            <div id="bw_r1c2" class="card col-lg-8">
-                <div id="booking_card" class="card-body">
+            <div class="card col-lg-8">
+                <BookingSuccessful v-if="onSuccesForm" :item="item" :booking_id="booking_id" :booking_from="fromDateNew"
+                    :booking_to="toDateNew" :status="'success'">
+                    <template v-slot:title>Modifica avvenuta con successo</template>
+                    <template v-slot:message>
+                        Ritorna a <a href="/bookings" class="alert-link">"Gestiti prenotazioni"</a>.
+                    </template>
+                </BookingSuccessful>
+                <ErrorForm v-if="onErrorForm" :message="errorMessage">
+                    Ritorna a <a href="/bookings" class="alert-link">"Gestiti prenotazioni"</a>.
+                </ErrorForm>
+                <div v-if="!onSuccesForm && !onErrorForm" id="booking_card" class="card-body">
                     <h2 class="card-title">Dettagli prenotazione</h2>
                     <table class="table">
                         <tbody>
@@ -215,31 +242,24 @@ onMounted(() => {
                                 <td> {{ item.item_details.fuel_consumption }} l/100Km </td>
                             </tr>
                             <tr>
-                                <th scope="row">Data di ritiro <font-awesome-icon :icon="['fas', 'circle-info']" /></th>
-                                <td v-if="show">
-                                    <Datepicker id="datepicker-from-date-new" 
-                                        v-model="fromDateNew" 
-                                        :lower-limit="fromDate"
-                                        :upperLimit="toDate"
-                                        :clearable="false"
-                                        inputFormat='dd/MM/yyyy'
-                                        />
+                                <th scope="row"><font-awesome-icon :icon="['fas', 'circle-info']" /> Data di ritiro</th>
+                                <td v-if="onModify">
+                                    <Datepicker id="datepicker-from-date-new" v-model="fromDateNew"
+                                        :lower-limit="fromDate" :upperLimit="toDate" :clearable="false" :typeable="true"
+                                        inputFormat='dd/MM/yyyy' />
                                 </td>
                                 <td v-else>{{ fromDate.toLocaleDateString('it-IT') }}</td>
                             </tr>
                             <tr>
-                                <th scope="row">Data di restituzione <font-awesome-icon :icon="['fas', 'circle-info']" /></th>
-                                <td v-if="show">
-                                    <Datepicker id="datepicker-to-date-new"
-                                    v-model="toDateNew"
-                                    :clearable="false"
-                                    :lower-limit="fromDate"
-                                    :upperLimit="toDate"
-                                    inputFormat='dd/MM/yyyy'
-                                    />
+                                <th scope="row"><font-awesome-icon :icon="['fas', 'circle-info']" /> Data di
+                                    restituzione</th>
+                                <td v-if="onModify">
+                                    <Datepicker id="datepicker-to-date-new" v-model="toDateNew" :clearable="false"
+                                        :typeable="true" :lower-limit="fromDate" :upperLimit="toDate"
+                                        inputFormat='dd/MM/yyyy' />
                                     <p class="text-danger">
-                                    {{ canBook1 ? '': 'La data di restituzione deve essere successiva a quella di ritiro.' }}
-                                    {{ canBook2 ? '': 'Le nuove date devono essere comprese nell\'intervallo di prenotazione precedente' }}
+                                        {{ canBook1 ? '': 'La data di restituzione deve essere successiva a quella di ritiro.' }}
+                                        {{ canBook2 ? '': 'Le nuove date devono essere comprese nell\'intervallo di prenotazione precedente' }}
                                     </p>
                                 </td>
                                 <td v-else>{{ toDate.toLocaleDateString('it-IT') }}</td>
@@ -287,8 +307,9 @@ onMounted(() => {
                             </tr>
                         </tbody>
                     </table>
+                    <button type="button" class="btn btn-warning" v-if="canModify" @click="updateBooking()">Salva
+                        modifiche</button>
                 </div>
-                <button v-if="canModify">Salva modifiche</button>
             </div><!-- bw_r1c1 -->
         </div><!-- bw_row -->
     </div> <!-- bw_main -->
