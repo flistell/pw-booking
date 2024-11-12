@@ -22,6 +22,8 @@ onMounted(() => {
             </svg>
         </div>
         <div class="col-4">
+            La tua sessione è stata scollegata.
+            <br>
             Torna a trovarci presto! 
             <hr>
             O anche <a href="/">subito</a> :)

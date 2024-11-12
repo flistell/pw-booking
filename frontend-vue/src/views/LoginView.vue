@@ -43,5 +43,38 @@ async function onSubmit(values) {
             </Form>
         </div>
     </div>
+    <div class="card m-3">
+        <h5 class="card-header">
+            <small class="text-body-scondary">Utenti disponibili</small>
+        </h5>
+        <div class="card-body">
+            <table class="text-secondary">
+                <tr>
+                    <th>Username</th>
+                    <th>Password</th>
+                </tr>
+                <tr>
+                    <td>mrossi</td>
+                    <td>password01</td>
+                </tr>
+                <tr>
+                    <td>lbianchi</td>
+                    <td>password02</td>
+                </tr>
+                <tr>
+                    <td>averdi</td>
+                    <td>password03</td>
+                </tr>
+                <tr>
+                    <td>sneri</td>
+                    <td>password04</td>
+                </tr>
+                <tr>
+                    <td>pgialli</td>
+                    <td>password05</td>
+                </tr>
+            </table>
+        </div>
+    </div>
     <!-- END LoginView.vue -->
 </template>

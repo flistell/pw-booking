@@ -33,7 +33,7 @@ class Users(CollectionBase):
 class Item(ResourceBase):
     _pkey = 'id'
     _tablename = 'catalog'
-    _extra_operations = [ 'is_available' ]
+    _extra_operations = [ 'availability' ]
     _query = '''SELECT 
         c.id AS id,
         c.item_type,
@@ -51,19 +51,33 @@ class Item(ResourceBase):
         INNER JOIN userprofile u ON c.item_owner_id = u.id
         WHERE c.id = {value}'''
     
-    def is_available(self, **kwargs):
-        query = '''
-        SELECT id AS booking_id
+    def availability(self, interval_from, interval_to, but=None):
+        query = f"""
+        SELECT 
+            booking_start, booking_end 
         FROM booking 
-        WHERE booked_item_id == :item_id
-        '''
-        cur = self._db.execute(query, {'item_id': self._id})
-        result = cur.fetchone()
-        logger.debug(f"result: '{result}'")
-        available = False
-        if not result:
-            self._available = True
-        return {'id': self._id, 'available': available}
+        WHERE 
+            booked_item_id = {self.get_id()}
+            AND
+            booking_status != 'CANCELLED'
+            AND
+            booking_start > {interval_from}
+            AND
+            bookind_end < {interval_to}
+        """
+        if but:
+            query = query + f" AND id != {but}"
+        cur = self._db.execute(query)
+        results = cur.fetchall()
+        logger.debug(f"result: '{results}'")
+        response = {
+            'available': [],
+            'unavailable': []
+        }
+        for r in results:
+            logger.debug(pformat(r))
+        return {}
+
 
     def _format(self, data):
         # sovrascrive il metodo di default per riformattare item_details

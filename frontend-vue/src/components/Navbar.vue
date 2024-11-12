@@ -25,7 +25,7 @@ const { user } = storeToRefs(authUserStore);
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
               aria-expanded="false">
               <div class="profile-pic">
-                <img :src="`https://i.pravatar.cc/50?img=${user.id}`" alt="Profile Picture">
+                <img :src="`https://i.pravatar.cc/50?img=${70 - user.id}`" alt="Profile Picture">
               </div>
               <!-- You can also use icon as follows: -->
               <!--  <i class="fas fa-user"></i> -->

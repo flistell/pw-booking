@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Ping from '../components/Ping.vue'
-import Items from '../components/Items.vue'
-import Item from '../components/Item.vue'
+import Item from '../views/ItemView.vue'
 import HomeView from '../views/HomeView.vue'
 import BookingWizard from '@/views/BookingWizard.vue'
 import LoginView from '@/views/LoginView.vue'
@@ -30,11 +29,6 @@ export const router = createRouter({
       path: '/logout',
       name: 'logout',
       component: LogoutView
-    },
-    {
-      path: '/items',
-      name: 'Items',
-      component: Items
     },
     {
        path: '/items/:id?',
@@ -69,8 +63,11 @@ export const router = createRouter({
     {
       path: '/bookings/:booking_id',
       name: 'BookingDetails',
-      component: BookingDetails
-    }, 
+      component: BookingDetails,
+      props: route => ({
+        canModify: route.query.modify 
+      })
+    },
     {
       path: '/debug',
       name: 'AboutView',

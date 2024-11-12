@@ -54,14 +54,24 @@ def get_by_id(resource, id):
         return "Resource not found", 404
     collection = registered_resources[resource]()
     obj = collection.get(id)
-    if args:
-        func = obj.operation(next(iter(args)))
-        logger.debug(func)
-        if not func:
-            return 'Operation not supported!', 400
-        result = func(**args)
-    else: 
-        result = obj.serialize()
+    result = obj.serialize()
+    return jsonify(result)
+
+
+@bp.route('/<resource>/<id>/<sub>', methods=['GET'])
+def operation_by_id(resource, id, sub):
+    args = request.args.to_dict()
+    logger.debug(f"GET {resource}/{id}/{sub} '{args}'")
+    if resource not in registered_resources:
+        return "Resource not found", 404
+    collection = registered_resources[resource]()
+    obj = collection.get(id)
+    func = obj.operation(sub)
+    logger.debug(func)
+    if not func:
+        return 'Sub resource not found!', 400
+    result = func(**args)
+    result = obj.serialize()
     return jsonify(result)
 
 

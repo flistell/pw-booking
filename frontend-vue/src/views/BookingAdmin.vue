@@ -8,9 +8,14 @@ import ConfirmDialog from '@/components/ConfirmDialog.vue';
 // Object properties and dynamic
 
 const router = useRouter()
-const bookings = ref([])
+const bookings = ref({
+    item_details: {
+        brand: '',
+        model: ''
+    }
+})
 const dialogSlotProp = ref()
-const showConfirm = ref(false)
+const confirmModal = ref(null)
 
 // Functions
 
@@ -26,7 +31,7 @@ const getBookings = () => {
         })
         .catch((error) => {
             console.error(error);
-            if (error.status == 401){
+            if (error.status == 403) {
                 router.push({
                     path: '/logout'
                 })  
@@ -38,11 +43,16 @@ const getBookings = () => {
         })
     }
 
-const openDetails = (id) => {
+const openDetails = (id, modify) => {
     console.log("openDetails(): " + id )
-    router.push(
-        `/bookings/${id}`
-    )
+    var url
+    if (modify){
+        url = `/bookings/${id}?modify=true`
+    } else {
+        url = `/bookings/${id}`
+    }
+    console.log("url:", url)
+    router.push(url)
 }
 
 const formatDate = (date) => {
@@ -53,15 +63,36 @@ const formatDate = (date) => {
 
 const showConfirmForCancel = (booking_id) => {
     console.log("showConfirmForCancel: " + booking_id)
-    dialogSlotProp.value = booking_id.value
-    showConfirm.value = true
+    dialogSlotProp.value = booking_id
+    confirmModal.value.showModal();
 }
 
-const deleteConfirmed = () => {
+const cancelConfirmed = () => {
     console.log("deleteConfirmed(): ", dialogSlotProp.value)
+    const url = `${settings.resourcesUrl}/bookings/${dialogSlotProp.value}`
+    axios.delete(
+        url,
+        { withCredentials: true }
+        )
+        .then((response) => {
+            console.log(response.data);
+            confirmModal.value.closeModal()
+            getBookings()
+        })
+        .catch((error) => {
+            confirmModal.value.closeModal()
+            console.error(error);
+            if (error.status == 403) {
+                router.push({
+                    path: '/logout'
+                })
+            } else {
+                router.push({
+                    path: '/error/'
+                })
+            }
+        })
 }
-
-const confirmModal = ref(null)
 
 function showModal() {
     console.log('showModal', confirmModal.value)
@@ -78,16 +109,14 @@ console.log(ConfirmDialog)
 <template>
     <!-- BEGIN views/BookingAdmin -->
     <div class="d-flex">
-        showConfirm: {{ showConfirm }}
-                #
         <ConfirmDialog 
             title="Elimina prenotazione" 
             ref="confirmModal"
-            alert-class="warning">
+            alert-class="danger"
+            :callback="cancelConfirmed"
+            btn-cancel-text="Annulla cancellazione.">
             Sei sicuro di voler eliminare la prenotazione '{{ dialogSlotProp }}' ?</ConfirmDialog>
-        #
         <div class="row">
-            <div v-if="showConfirm"><br>Adesso si</div>
             <div class="col-sm-10">
                 <br>
                 <h3>Prenotazioni</h3>
@@ -97,9 +126,9 @@ console.log(ConfirmDialog)
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th scope="col">Id</th>
-                            <th scope="col">User</th>
-                            <th scope="col">Item Id</th>
+                            <th scope="col">Codice prenotazione</th>
+                            <th scope="col">Utente</th>
+                            <th scope="col">Auto</th>
                             <th scope="col">Start</th>
                             <th scope="col">End</th>
                             <th scope="col">Status</th>
@@ -110,8 +139,9 @@ console.log(ConfirmDialog)
                     <tbody>
                         <tr v-for="(booking, index) in bookings" :key="index">
                             <td>{{ booking.id }}</td>
-                            <td>{{ booking.user_id }}</td>
-                            <td>{{ booking.booked_item_id }}</td>
+                            <td>{{ booking.username }}</td>
+                            <td v-if="booking.item_details">{{ booking.item_details.brand || ''}} {{ booking.item_details.model || ''  }}</td>
+                            <td v-else="booking.item_details">{{ booking.booked_item_id }}</td>
                             <td>{{ formatDate(booking.booking_start) }}</td>
                             <td>{{ formatDate(booking.booking_end) }}</td>
                             <td>{{ booking.booking_status }}</td>
@@ -123,9 +153,12 @@ console.log(ConfirmDialog)
                                 <div class="btn-group" role="group">
                                     <button type="button" @click="openDetails(booking.id)"
                                         class="btn btn-primary btn-sm">Dettagli</button>
-                                    <button type="button" class="btn btn-warning btn-sm">Modifica</button>
+                                    <button type="button" 
+                                            class="btn btn-warning btn-sm"
+                                            @click="openDetails(booking.id, true)"
+                                    >Modifica</button>
                                     <button type="button" class="btn btn-danger btn-sm"
-                                        @click="showModal">Cancella</button>
+                                        @click="showConfirmForCancel(booking.id)">Cancella</button>
                                 </div>
                             </td>
                         </tr>

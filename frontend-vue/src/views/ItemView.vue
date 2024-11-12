@@ -7,7 +7,7 @@ const today = ref(new Date());
 </script>
 
 <template>
-    <!-- components/Item.vue -->
+    <!-- views/ItemView.vue -->
     <div id="item_main">
         <div id="item_row" class="row align-items-start">
             <div id="item_col" class="col-lg-8 mb-3 mb-lg-0">
@@ -76,12 +76,12 @@ const today = ref(new Date());
                         <hr>
                         <fieldset>
                             <legend>Data inizio</legend>
-                            <Datepicker id="datepicker_from" v-model="date_from" :clearable="true"
+                            <Datepicker id="datepicker_from" v-model="date_from" :clearable="false"
                                 :lowerLimit="today" />
                         </fieldset>
                         <fieldset>
                             <legend>Data fine</legend>
-                            <Datepicker id="datepicker_to" v-model="date_to" :clearable="true"
+                            <Datepicker id="datepicker_to" v-model="date_to" :clearable="false"
                                 :lowerLimit="date_from" />
                         </fieldset>
                         <hr>

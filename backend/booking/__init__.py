@@ -82,7 +82,7 @@ def create_app(test_config=None):
     import booking.views.login as login
     app.register_blueprint(login.bp)
 
-    import booking.views.payment as payment
-    app.register_blueprint(payment.bp)
+    #import booking.views.payment as payment
+    #app.register_blueprint(payment.bp)
 
     return app

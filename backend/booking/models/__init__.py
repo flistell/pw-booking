@@ -42,6 +42,7 @@ class CollectionBase():
     _extra_operations = []
     _kind = object
     _query = "SELECT * FROM {tablename}"
+    _query_filter = "SELECT * FROM {tablename}"
     _user_fkey = 'user_id'
 
     def __init__(self):
@@ -100,7 +101,7 @@ class CollectionBase():
 
     def filter(self, **kwargs):
         logger.debug(self.__class__.__name__ + f".filter({kwargs});")
-        query = f"SELECT * FROM {self._tablename} WHERE "
+        query = self._query_filter.format(tablename=self._tablename) + " WHERE "
         if 'user' in kwargs:
             query = f"{query} {self._user_fkey} = '{kwargs['user']}'"
         query_where_list = set()
@@ -112,11 +113,13 @@ class CollectionBase():
         cursor = self._db.execute(query)
         resultset = cursor.fetchall()
         logger.debug("resultset: " + pformat(resultset))
-        return resultset
+        return self._format(resultset)
 
     def delete(self, **kwargs):
         raise NotImplementedError
 
+    def _format(self, data):
+        return data
 
     # def add(self, **kwargs):
     #     logger.debug(self.__class__.__name__ + f".add({kwargs});")

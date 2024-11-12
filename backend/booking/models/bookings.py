@@ -1,5 +1,6 @@
 import logging
 import pprint
+import json
 from pprint import pformat
 from . import CollectionBase
 from . import ResourceBase
@@ -188,3 +189,25 @@ class Bookings(CollectionBase):
     _tablename = "booking"
     _kind = Booking
     _user_fkey = 'user_id'
+    _query_filter = "SELECT * FROM {tablename}"
+
+    _query_filter = """SELECT 
+       b.id AS id,
+       b.user_id AS user_id,
+       b.created,
+       b.booked_item_id,
+       b.booking_start,
+       b.booking_end,
+       b.booking_status,
+       b.user_id,
+       u.username,
+       c.item_details
+       FROM booking b 
+       INNER JOIN userprofile u ON b.user_id = u.id 
+       INNER JOIN catalog c ON b.booked_item_id = c.id"""
+
+    def _format(self, data):
+        for d in data:
+            if 'item_details' in d:
+                d['item_details'] = json.loads(d['item_details'])
+        return data
