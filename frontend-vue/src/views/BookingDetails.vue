@@ -217,6 +217,48 @@ onMounted(() => {
                                 <td>{{ booking.id }}</td>
                             </tr>
                             <tr>
+                                <th scope="row"><font-awesome-icon :icon="['fas', 'circle-info']" /> Data di ritiro</th>
+                                <td v-if="onModify">
+                                    <Datepicker id="datepicker-from-date-new" v-model="fromDateNew"
+                                        :lower-limit="fromDate" :upperLimit="toDate" :clearable="false" :typeable="true"
+                                        inputFormat='dd/MM/yyyy' />
+                                </td>
+                                <td v-else>{{ fromDate.toLocaleDateString('it-IT') }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><font-awesome-icon :icon="['fas', 'circle-info']" /> Data di
+                                    restituzione</th>
+                                <td v-if="onModify">
+                                    <Datepicker id="datepicker-to-date-new" v-model="toDateNew" :clearable="false"
+                                        :typeable="true" :lower-limit="fromDate" :upperLimit="toDate"
+                                        inputFormat='dd/MM/yyyy' />
+                                    <p class="text-danger">
+                                        {{ canBook1 ? '': 'La data di restituzione deve essere successiva a quella di ritiro.' }}
+                                        {{ canBook2 ? '': 'Le nuove date devono essere comprese nell\'intervallo di prenotazione precedente' }}
+                                    </p>
+                                </td>
+                                <td v-else>{{ toDate.toLocaleDateString('it-IT') }}</td>
+                            </tr>
+                            <tr v-if="onModify">
+                                <td colspan="2" class="table-warning">
+                                    <font-awesome-icon :icon="['fas', 'circle-exclamation']" />
+                                    Le nuove date devono essere comprese nell intervallo di prenotazione precedente
+                                    <font-awesome-icon :icon="['fas', 'circle-exclamation']" />
+                                </td>
+                            </tr>
+                            <tr v-if="onModify">
+                                <td colspan="2">
+                                    <div class="d-flex justify-content-center">
+                                <button type="button" class="btn btn-warning"  @click="updateBooking()">Salva modifiche</button>
+                                </div>
+                            </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <h2 class="card-title">Dettagli Veicolo</h2>
+                    <table class="table">
+                        <tbody>
+                            <tr>
                                 <th scope="row">Auto</th>
                                 <td>{{ item.item_details.brand }} {{ item.item_details.model }}</td>
                             </tr>
@@ -240,36 +282,6 @@ onMounted(() => {
                                     Consumo
                                 </th>
                                 <td> {{ item.item_details.fuel_consumption }} l/100Km </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><font-awesome-icon :icon="['fas', 'circle-info']" /> Data di ritiro</th>
-                                <td v-if="onModify">
-                                    <Datepicker id="datepicker-from-date-new" v-model="fromDateNew"
-                                        :lower-limit="fromDate" :upperLimit="toDate" :clearable="false" :typeable="true"
-                                        inputFormat='dd/MM/yyyy' />
-                                </td>
-                                <td v-else>{{ fromDate.toLocaleDateString('it-IT') }}</td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><font-awesome-icon :icon="['fas', 'circle-info']" /> Data di
-                                    restituzione</th>
-                                <td v-if="onModify">
-                                    <Datepicker id="datepicker-to-date-new" v-model="toDateNew" :clearable="false"
-                                        :typeable="true" :lower-limit="fromDate" :upperLimit="toDate"
-                                        inputFormat='dd/MM/yyyy' />
-                                    <p class="text-danger">
-                                        {{ canBook1 ? '': 'La data di restituzione deve essere successiva a quella di ritiro.' }}
-                                        {{ canBook2 ? '': 'Le nuove date devono essere comprese nell\'intervallo di prenotazione precedente' }}
-                                    </p>
-                                </td>
-                                <td v-else>{{ toDate.toLocaleDateString('it-IT') }}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2" class="table-warning">
-                                    <font-awesome-icon :icon="['fas', 'circle-exclamation']" />
-                                    Le nuove date devono essere comprese nell intervallo di prenotazione precedente
-                                    <font-awesome-icon :icon="['fas', 'circle-exclamation']" />
-                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -307,8 +319,6 @@ onMounted(() => {
                             </tr>
                         </tbody>
                     </table>
-                    <button type="button" class="btn btn-warning" v-if="canModify" @click="updateBooking()">Salva
-                        modifiche</button>
                 </div>
             </div><!-- bw_r1c1 -->
         </div><!-- bw_row -->

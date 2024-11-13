@@ -111,8 +111,21 @@ def update(resource, id):
     if 'id' not in data:
         return jsonify({}), 500
     collection = registered_resources[resource]()
-    logger.debug(collection)
     obj = collection.get(id)
+    if resource in protected_resources:
+        try:
+            user_obj = validate_token(request)
+            logger.debug("Found authenticated user: " + repr(user_obj))
+        except RuntimeError as e:
+            logger.error(e)
+            return jsonify({
+                'message': repr(e),
+                'authenticated': False
+            }), 403
+        if not obj.owned_by(user_obj.get_id()):
+            return jsonify({
+                'message': f"User {user_obj.get_id()} can't alter resource {id}."
+            }), 403
     try:
         obj.update(**data)
     except Exception as e:

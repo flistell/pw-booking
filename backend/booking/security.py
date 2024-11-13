@@ -8,6 +8,9 @@ logger = logging.getLogger(__name__)
 
 def validate_token(request):
     auth_cookie = request.cookies.get('Authorization', '')
+    if not auth_cookie:
+        logger.error('Missing Authorization cookie.')
+        raise ValueError('Missing Authorization cookie.')
     logger.debug("auth_cookie: " + str(auth_cookie))
     try:
         token = auth_cookie

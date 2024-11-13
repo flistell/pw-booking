@@ -162,6 +162,13 @@ class ResourceBase():
             logger.debug("Created new (unsaved) object: " + pformat(self._data))
         logger.debug("Object: " + pformat(self.serialize()))
 
+    def _sync_obj(self):
+        query = self._query.format(
+        tablename=self._tablename, pkey=self._pkey, value=self._id)
+        self._data = self._format(self._from_table(id, query))
+        self._id = self._data[self._pkey]
+        
+
     def _format(self, data):
         return data
 

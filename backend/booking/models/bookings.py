@@ -105,16 +105,45 @@ class Booking(ResourceBase):
         if ret.get('rowcount', 0) != 1:
             self._booking_status(BOOKED)
             raise RuntimeError(
-                "Something wen wrong while updating booking status.")
+                "Something went wrong while updating booking status.")
         ret = {
             'id': self._id,
             'booking_status': self._data['booking_status']
         }
+        self._sync_obj()
+        return ret
+
+    def _update_dates(self, **kwargs):
+        logger.debug(type(self).__name__ + "._update_dates()")
+        logger.debug(pformat(kwargs))
+        if not 'booking_start' or not 'booking_end':
+            msg = 'booking_start and booking_end are required.'
+            logger.error(msg)
+            raise ValueError(msg)
+        if self._booking_status() == CANCELLED:
+            msg = 'Cannot change a cancelled booking.'
+            logger.error(msg)
+            raise RuntimeError(msg)
+        result = self._update_internal(booking_start=kwargs['booking_start'], booking_end=kwargs['booking_end'])
+        if result.get('rowcount', 0) != 1:
+            self._booking_status(BOOKED)
+            raise RuntimeError(
+                "Something went wrong while updating booking status.")
+        ret = {
+            'id': self.get_id(),
+            'op': 'UPDATE_BOOKING_DATES',
+            'result': 'SUCCESS'
+        }
+        self._sync_obj()
         return ret
 
     def update(self, **kwargs):
         logger.debug(type(self).__name__ + ".update(**kwargs)")
-        return self._confirm()
+        if 'booking_status' in kwargs:
+            return self._confirm()
+        if 'booking_start' and 'booking_end' in kwargs:
+            return self._update_dates(**kwargs)
+        raise ValueError("Missing parameters for operation")
 
     def _update_internal(self, **kwargs):
         logger.debug(type(self).__name__ + "._update_internal(**kwargs)")
@@ -141,7 +170,6 @@ class Booking(ResourceBase):
 
     def _update_all(self):
         logger.debug(type(self).__name__ + ".update_all()")
-
         sql_update = f'''
         UPDATE {self._tablename} 
         SET

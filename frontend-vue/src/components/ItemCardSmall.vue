@@ -10,7 +10,7 @@ const props = defineProps({
     <div id="item_card_small" class="card-body">
     <!-- BEGIN components/ItemCardSmall.vue-->
         <div>
-            <h2 class="card-title">{{ brand }} {{ model }}</h2>
+            <h3 class="card-title">{{ brand }} {{ model }}</h3>
             <img class="img-thumbnail rounded item-card-image" :src="`/public/static/images/${photo}`">
         </div>
     <!-- END components/ItemCardSmall.vue-->

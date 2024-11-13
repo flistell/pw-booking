@@ -23,7 +23,7 @@ const props = defineProps(['item'])
                     <div class="d-flex flex-wrap align-items-center mb-2">
                         <i class="fas fa-map-marker-alt mr-2 text-primary"></i>
                         <!-- city -->
-                        <span class="text-body-secondary">{{ item.city }}</span>
+                        <span class="text-body-secondary">&nbsp;{{ item.city }}</span>
                         <span class="mx-2">&#8226;</span>
                         <span class="text-body-secondary">{{ item.country }}</span>
                     </div>

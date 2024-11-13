@@ -1,17 +1,19 @@
 <script setup>
 import { settings } from '@/assets/data/settings.js'
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router'
 import axios from 'axios';
 import ConfirmDialog from '@/components/ConfirmDialog.vue';
+import BookingRow from '@/components/BookingRow.vue';
 
 // Object properties and dynamic
 
 const router = useRouter()
 const bookings = ref({
     item_details: {
-        brand: '',
-        model: ''
+        brand: '_brand_',
+        model: '_model_',
+        photo: '_photo_'
     }
 })
 const dialogSlotProp = ref()
@@ -27,7 +29,7 @@ const getBookings = () => {
         )
         .then((response) => {
             bookings.value = response.data;
-            console.log(response.data);
+            console.log("bookings", response.data);
         })
         .catch((error) => {
             console.error(error);
@@ -99,9 +101,11 @@ function showModal() {
     confirmModal.value.showModal();
 }
 
+
+
 // Hooks
 
-onMounted(() => { getBookings() })
+onMounted(async () => { await getBookings() })
 
 console.log(ConfirmDialog)
 
@@ -109,63 +113,26 @@ console.log(ConfirmDialog)
 <template>
     <!-- BEGIN views/BookingAdmin -->
     <div class="d-flex">
-        <ConfirmDialog 
-            title="Elimina prenotazione" 
-            ref="confirmModal"
-            alert-class="danger"
-            :callback="cancelConfirmed"
+        <ConfirmDialog title="Elimina prenotazione" ref="confirmModal" alert-class="danger" :callback="cancelConfirmed"
             btn-cancel-text="Annulla cancellazione.">
             Sei sicuro di voler eliminare la prenotazione '{{ dialogSlotProp }}' ?</ConfirmDialog>
-        <div class="row">
-            <div class="col-sm-10">
-                <br>
-                <h3>Prenotazioni</h3>
-                <hr><br>
-                <button type="button" class="btn btn-success btn-sm">New booking</button>
-                <br><br>
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th scope="col">Codice prenotazione</th>
-                            <th scope="col">Utente</th>
-                            <th scope="col">Auto</th>
-                            <th scope="col">Start</th>
-                            <th scope="col">End</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Booked</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(booking, index) in bookings" :key="index">
-                            <td>{{ booking.id }}</td>
-                            <td>{{ booking.username }}</td>
-                            <td v-if="booking.item_details">{{ booking.item_details.brand || ''}} {{ booking.item_details.model || ''  }}</td>
-                            <td v-else="booking.item_details">{{ booking.booked_item_id }}</td>
-                            <td>{{ formatDate(booking.booking_start) }}</td>
-                            <td>{{ formatDate(booking.booking_end) }}</td>
-                            <td>{{ booking.booking_status }}</td>
-                            <td>
-                                <span v-if="!booking.booking_status > 0">No</span>
-                                <span v-else>Yes</span>
-                            </td>
-                            <td>
-                                <div class="btn-group" role="group">
-                                    <button type="button" @click="openDetails(booking.id)"
-                                        class="btn btn-primary btn-sm">Dettagli</button>
-                                    <button type="button" 
-                                            class="btn btn-warning btn-sm"
-                                            @click="openDetails(booking.id, true)"
-                                    >Modifica</button>
-                                    <button type="button" class="btn btn-danger btn-sm"
-                                        @click="showConfirmForCancel(booking.id)">Cancella</button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        </div>
+    </div>
+    <section v-for="(booking, index) in bookings">
+        <BookingRow :key="index" :booking="booking" class="mb-3" >
+            <template v-slot:slot1>
+                <td colspan="2">
+                <div class="btn-group d-flex justify-content-center" role="group">
+                    <button type="button" @click="openDetails(booking.id)" class="btn btn-primary btn-sm">Dettagli</button>
+                    <button type="button" class="btn btn-warning btn-sm"
+                        @click="openDetails(booking.id, true)"
+                        :disabled="booking.booking_status == 'CANCELLED'">Modifica</button>
+                    <button type="button" class="btn btn-danger btn-sm"
+                        @click="showConfirmForCancel(booking.id)"
+                        :disabled="booking.booking_status == 'CANCELLED'">Cancella</button>
+                </div>
+                </td>
+             </template>
+        </BookingRow>
+    </section>
     <!-- END views/BookingAdmin -->
 </template>
