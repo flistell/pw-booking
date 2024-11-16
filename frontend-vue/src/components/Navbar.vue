@@ -8,7 +8,7 @@ const { user } = storeToRefs(authUserStore);
 
 <template>
   <!-- BEGIN components/Navbar.vue -->
-  <nav id="navbar" class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+  <nav id="navbar" class="navbar navbar-expand-lg bg-body-tertiary fixed-top" data-bs-theme="dark">
     <div class="container-fluid">
       <a class="navbar-brand" href="/">SocialAuto</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
