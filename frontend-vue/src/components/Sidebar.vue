@@ -9,46 +9,57 @@ const { user } = storeToRefs(authUserStore);
 
 <template>
     <!-- BEGIN components/Sidebar.vue -->
-    <nav id="sidebar" class="navbar bg-success fixed-top" data-bs-theme="dark">
+    <nav id="sidebar" class="navbar navbar-expand-lg bg-success fixed-top" data-bs-theme="dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/">SocialAuto</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
+            <a class="navbar-brand" href="/">
+                <font-awesome-icon :icon="['fas', 'house']" />&nbsp;SocialAuto
+            </a>
+            <button v-if="user" class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
                 data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar"
                 aria-label="Toggle navigation">
                 <div class="profile-pic">
-                    <img :src="`https://i.pravatar.cc/50?img=${70 - user.id}`" alt="Profile Picture">
+                    <img :src="`https://i.pravatar.cc/40?img=${70 - user.id}`" alt="Profile Picture">
                 </div>
                 <font-awesome-icon :icon="['fas', 'chevron-right']" />
                 <!--
                 <span class="navbar-toggler-icon"></span>
                     -->
             </button>
-            <div class="offcanvas offcanvas-end" data-bs-theme="light"  tabindex=" -1" id="offcanvasDarkNavbar"
-                aria-labelledby="offcanvasDarkNavbarLabel">
+            <div v-if="user" if="offcanvas1" class="offcanvas offcanvas-end" data-bs-theme="dark" tabindex=" -1"
+                id="offcanvasDarkNavbar" aria-labelledby="offcanvasDarkNavbarLabel">
                 <div class="offcanvas-header">
                     <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel">SocialAuto</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
                         aria-label="Close"></button>
                 </div>
                 <div class="offcanvas-body">
+
                     <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
                         <li class="nav-item">
-                            <div class="profile-pic">
-                                <img :src="`https://i.pravatar.cc/50?img=${70 - user.id}`" alt="Profile Picture">
-                            </div>
-                            <i>&nbsp;{{ user.username }}</i>
+                            <a class="nav-link pb-0">
+                                <div class="profile-pic">
+                                    <img :src="`https://i.pravatar.cc/50?img=${70 - user.id}`" alt="Profile Picture">
+                                </div>
+                                <i>&nbsp;{{ user.username }}</i>
+                            </a>
                         </li>
-                        <li><hr></li>
-                        <li><a class="dropdown-item" href="/bookings"><i class="fas fa-list-check fa-fw"></i> Gestisci
-                                Prenotazioni</a></li>
-                        <li><a class="dropdown-item" href="/debug"><i class="fas fa-circle-info fa-fw"></i> Account</a>
+                        <li>
+                            <hr>
                         </li>
-                        <li><hr></li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/bookings"><i class="fas fa-list-check fa-fw"></i> Gestisci Prenotazioni</a>
+                        </li>
+                        <!--
+                        <li><a class="nav-link active" href="/debug"><i class="fas fa-circle-info fa-fw"></i> Account</a>
+                        </li>
+                    -->
+                        <li>
+                            <hr>
+                        </li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt fa-fw"></i> Log
-                                Out</a></li>
+                        <li><a class="nav-link active" href="/logout"><i class="fas fa-sign-out-alt fa-fw"></i> Log Out</a></li>
                     </ul>
                     <!--
                     <form class="d-flex mt-3" role="search">
@@ -64,11 +75,40 @@ const { user } = storeToRefs(authUserStore);
 </template>
 
 <style>
+
+.offcanvas {
+    background-color: #006335;
+}
 .sidebar {
     z-index: 500;
 }
 
 .offcanvas.offcanvas-end {
     width: 300px;
+}
+
+/* Profile Picture */
+.profile-pic {
+    display: inline-block;
+    vertical-align: middle;
+    width: 30px;
+    height: 30px;
+    overflow: hidden;
+    border-radius: 50%;
+}
+
+.profile-pic img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.profile-menu .dropdown-menu {
+    right: 0;
+    left: unset;
+}
+
+.profile-menu .fa-fw {
+    margin-right: 10px;
 }
 </style>

@@ -50,7 +50,7 @@ console.log('props.booking', props.booking)
                                 <td v-if="booking.booking_status == 'CANCELLED'" class="table-danger">PRENOTAZIONE
                                     CANCELLATA
                                 </td>
-                                <td v-if="booking.booking_status == 'NEW'" class="table-warning">PRENOTAZIONE NON
+                                <td v-if="booking.booking_status == 'BOOKED'" class="table-warning">PRENOTAZIONE NON
                                     CONFERMATA
                                 </td>
                                 <td v-if="booking.booking_status == 'CONFIRMED'" class="table-success">PRENOTAZIONE
