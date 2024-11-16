@@ -14,25 +14,18 @@ logger = logging.getLogger(__name__)
 
 @bp.route('/', methods=('POST',))
 def logout():
-    data = request.get_json()
-    email = data.get('email')
-    user = Users().find(mail_address=email)
-    logger.debug(pformat(user))
-    if not user or not user.authenticate(password=data['password']):
-        return jsonify({'message': 'Invalid credentials', 'authenticated': False}), 401
-
+    """Logout: non implementata completamente."""
+    # Provo a fare logout creando un token non valido
+    # ma è una soluzione parziale, non c'è modo (semplice) di dire
+    # che un jwt non sia più valido se non è scaduto.
     token = jwt.encode({
-        'sub': user.get('mail_address'),
+        'sub': '',
         'iat': datetime.utcnow(),
-        'exp': datetime.utcnow() + timedelta(minutes=30)},
+        'exp': datetime.utcnow() + timedelta(minutes=-999)},
         current_app.config['SECRET_KEY'])
     logger.debug("token: " + token)
     response = make_response({
-        'id': user.get('id'),
-        'username': user.get('username'),
-        'common_name': user.get('common_name'),
-        'family_name': user.get('family_name'),
-        'mail_address': user.get('mail_address'),
+        'id': '',
         'token': token })
     response.set_cookie("Authorization", token)
     logger.debug(response)

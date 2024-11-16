@@ -95,24 +95,12 @@ class Items(CollectionBase):
     _tablename = "catalog"
     _kind = Item
     _query = "select *,c.id AS id FROM catalog c INNER JOIN location l on c.item_location_id = l.id ORDER BY l.city"
-   
-    def _jsonify(self, data):
-        # sovrascrive il metodo di default per riformattare item_details
-        # qui c'è una doppia conversione:
-        # - in tabella item_details è un JSON
-        # - viene letto dal rowfactory come string
-        # - qui lo convertiamo da stringa json a dict
-        # - la view flask lo ri-converte in JSON con jsonify()
-        logger.debug(type(data))
-        if isinstance(data, list):
-            for row in data:
-                row['item_details'] = json.loads(row['item_details'] )
-        elif isinstance(data, dict):
-            data['item_details'] = json.loads(data['item_details'] )
-        return data 
-    
-    def get_all(self):
-        return self._jsonify(super().get_all())
+  
+    def _format(self, data):
+        for d in data:
+            if 'item_details' in d:
+                d['item_details'] = json.loads(d['item_details'])
+        return data
     
     def filter(self, **kwargs):
         logger.debug("args: " + pprint.pformat(kwargs))
@@ -132,6 +120,6 @@ class Items(CollectionBase):
         cursor = self._db.execute(search_query)
         resultset = cursor.fetchall()
         logger.debug(pprint.pformat(resultset))
-        return self._jsonify(resultset)
+        return self._format(resultset)
 
         

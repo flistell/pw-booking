@@ -36,21 +36,22 @@ def login_jwt():
         'username': user.get('username'),
         'common_name': user.get('common_name'),
         'family_name': user.get('family_name'),
-        'mail_address': user.get('mail_address'),
-        'token': token })
+        'mail_address': user.get('mail_address')
+        #'token': token 
+        })
     response.set_cookie("Authorization", value=token, domain="localhost")
     logger.debug("response:" + repr(response))
     return response
 
 
-@bp.route('/authenticate', methods=('POST',))
-def login_simple():
-    data = request.get_json()
-    email = data.get('email')
-    password = data.get('password')
-    user = Users().find(mail_address=email)
-    logger.debug(pformat(user))
-    if not user or not user.authenticate(password=data['password']):
-        return jsonify({'message': 'Invalid credentials', 'authenticated': False}), 401
-    return jsonify({'authenticated': True})
+# @bp.route('/authenticate', methods=('POST',))
+# def login_simple():
+#     data = request.get_json()
+#     email = data.get('email')
+#     password = data.get('password')
+#     user = Users().find(mail_address=email)
+#     logger.debug(pformat(user))
+#     if not user or not user.authenticate(password=data['password']):
+#         return jsonify({'message': 'Invalid credentials', 'authenticated': False}), 401
+#     return jsonify({'authenticated': True})
 

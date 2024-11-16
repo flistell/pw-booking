@@ -53,8 +53,14 @@ def get_by_id(resource, id):
     if resource not in registered_resources:
         return "Resource not found", 404
     collection = registered_resources[resource]()
-    obj = collection.get(id)
-    result = obj.serialize()
+    result = {}
+    try:
+        obj = collection.get(id)
+    except Exception as e:
+        logger.error(e)
+        return result
+    if obj:
+        result = obj.serialize()
     return jsonify(result)
 
 

@@ -11,7 +11,6 @@ from booking.models.resources import User, Users, Item, Items
 logger = logging.getLogger("Model")
 
 # Booking statuses
-NEW = 'NEW'
 BOOKED = 'BOOKED'      # Booked, waiting for payment
 CONFIRMED = 'CONFIRMED'   # Payment confirmed
 CANCELLED = 'CANCELLED'
@@ -22,7 +21,7 @@ ERROR = 'ERROR'
 class Booking(ResourceBase):
     _pkey = 'id'
     _tablename = 'booking'
-    _booking_statuses = [NEW, BOOKED, CONFIRMED, CANCELLED, ERROR]
+    _booking_statuses = [BOOKED, CONFIRMED, CANCELLED, ERROR]
 
     def _booking_status(self, new_status=None):
         if new_status and new_status in self._booking_statuses:
