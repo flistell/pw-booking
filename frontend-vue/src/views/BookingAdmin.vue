@@ -55,11 +55,11 @@ const openDetails = (id, modify) => {
     router.push(url)
 }
 
-const formatDate = (date) => {
-    let d = new Date()
-    d.setTime(date)
-    return d.toLocaleDateString('it-IT') 
-}
+// const formatDate = (date) => {
+//     let d = new Date()
+//     d.setTime(date)
+//     return d.toLocaleDateString('it-IT') 
+// }
 
 const showConfirmForCancel = (booking_id) => {
     console.log("showConfirmForCancel: " + booking_id)

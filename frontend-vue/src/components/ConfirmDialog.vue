@@ -22,16 +22,10 @@ function closeModal() {
     thisModalObj.value.hide();
 }
 
-
-
 onMounted(async () => {
     thisModalObj.value = new Modal('#confirm-dialog', {})
     console.log("thisModalObj", thisModalObj)
 })
-
-
-console.log("props: ", props)
-
 </script>
 
 <template>
