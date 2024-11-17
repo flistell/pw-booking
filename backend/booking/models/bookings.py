@@ -54,19 +54,22 @@ class Booking(ResourceBase):
     def _check_booking_conflict(self, **kwargs):
         logger.debug(type(self).__name__ +
                      f"._check_booking_conflict({kwargs})")
+        # Se una qualsiasi delle mie date cade dentro il range di una prenotazione 
+        # già effettuata, allora non devo accettare la prenotazione.
         sql_booking_conflict = f'''
         select * from {self._tablename} 
         where 
-            booked_item_id = {kwargs['booked_item_id']} and (
-                booking_start <= '{kwargs['booking_end']}' 
-                or booking_end >= '{kwargs['booking_start']}'
-            )
+            booked_item_id = {kwargs['booked_item_id']} and booking_status != 'CANCELLED' and
+            (booking_start BETWEEN '{kwargs['booking_start']}' AND '{kwargs['booking_end']}') or
+            (booking_end BETWEEN '{kwargs['booking_start']}' AND '{kwargs['booking_end']}')
         '''
         logger.debug(f"sql_booking_conflict: '{sql_booking_conflict}'")
-        count = self._db.execute(sql_booking_conflict).fetchone()
-        if count:
+        cursor = self._db.execute(sql_booking_conflict)
+        resultset = cursor.fetchall()
+        logger.debug("result: " + pformat(resultset))
+        if resultset and len(resultset) > 0:
             logger.warning(
-                f"Specified data is already booked: " + pprint.pformat(count))
+                f"Specified item is already booked: " + pformat(resultset))
             raise ValueError(
                 f"Invalid booking range. Resource {kwargs['booked_item_id']} already booked.")
 

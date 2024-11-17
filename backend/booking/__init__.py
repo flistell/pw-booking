@@ -34,11 +34,11 @@ def create_app(test_config=None):
         pass
 
     cors = CORS(app, resources={
-        r"/resources/*": {"origins": "http://localhost:5173"},
-        r"/resources/*/*": {"origins": "http://localhost:5173"},
-        r"/catalog/*": {"origins": "http://localhost:5173"},
-        r"/ping/*": {"origins": "http://localhost:5173"},
-        r"/login/*": {"origins": "http://localhost:5173"},
+        r"/resources/*": {"origins": ["http://localhost:5173", "http://localhost:8000"]},
+        r"/resources/*/*": {"origins": ["http://localhost:5173", "http://localhost:8000"]},
+        r"/catalog/*": {"origins": ["http://localhost:5173", "http://localhost:8000"]},
+        r"/ping/*": {"origins": ["http://localhost:5173", "http://localhost:8000"]},
+        r"/login/*": {"origins": ["http://localhost:5173", "http://localhost:8000"]},
         },
         supports_credentials=True)
     
