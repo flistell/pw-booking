@@ -60,8 +60,8 @@ class Booking(ResourceBase):
         select * from {self._tablename} 
         where 
             booked_item_id = {kwargs['booked_item_id']} and booking_status != 'CANCELLED' and
-            (booking_start BETWEEN '{kwargs['booking_start']}' AND '{kwargs['booking_end']}') or
-            (booking_end BETWEEN '{kwargs['booking_start']}' AND '{kwargs['booking_end']}')
+            ((booking_start BETWEEN '{kwargs['booking_start']}' AND '{kwargs['booking_end']}') or
+            (booking_end BETWEEN '{kwargs['booking_start']}' AND '{kwargs['booking_end']}'))
         '''
         logger.debug(f"sql_booking_conflict: '{sql_booking_conflict}'")
         cursor = self._db.execute(sql_booking_conflict)

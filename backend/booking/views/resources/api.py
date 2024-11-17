@@ -34,7 +34,7 @@ def get_all(resource):
             return jsonify({
                 'message': repr(e),
                 'authenticated': False
-            }), 403
+            }), 401
     elif resource in registered_resources:
         collection = registered_resources[resource]()
         if args:
@@ -127,7 +127,7 @@ def update(resource, id):
             return jsonify({
                 'message': repr(e),
                 'authenticated': False
-            }), 403
+            }), 401
         if not obj.owned_by(user_obj.get_id()):
             return jsonify({
                 'message': f"User {user_obj.get_id()} can't alter resource {id}."
@@ -156,7 +156,7 @@ def delete(resource, id):
             return jsonify({
                 'message': repr(e),
                 'authenticated': False
-            }), 403 
+            }), 401 
         if not obj.owned_by(user_obj.get_id()):
             return jsonify({
                 'message': f"User {user_obj.get_id()} can't DELETE resource {id}."
