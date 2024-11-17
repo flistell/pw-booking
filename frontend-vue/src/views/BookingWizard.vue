@@ -100,7 +100,7 @@ const initBooking = () => {
         })
         .catch((error) => {
             console.error("Booking", error);
-            alert(error)
+            // alert(error)
             resetForms();
             onErrorForm.value = true;
             errorMessage.value = error.response.data;
@@ -129,7 +129,7 @@ const confirmBooking = () => {
         })
         .catch((error) => {
             console.error("Booking", error)
-            alert(error)
+            // alert(error)
             resetForms();
             onErrorForm.value = true;
             errorMessage.value = error.response.data

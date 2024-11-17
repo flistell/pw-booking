@@ -41,10 +41,15 @@ if (props.status == 'success'){
     <div class="card-body">
         <div :class="{ 'alert-success': isSuccess, 'alert-warning': isWarning}" class="row alert align-items-center justify-content-center" role="alert">
             <div class="col-8">
-                <i v-if="isWarning" class="fa-solid fa-triangle-exclamation"/> <i v-if="isSuccess" class="fa-solid fa-circle-check"/> <h4>
-                <slot name="title"></slot>
-                </h4> <i v-if="isWarning" class="fa-solid fa-triangle-exclamation"/> <i v-if="isSuccess" class="fa-solid fa-circle-check"/>
-                <p>Hai richiesto {{ props.item.item_details.brand }} {{ props.item.item_details.model }}</p>
+                <h4 class="text-center">
+                    <font-awesome-icon v-if="isWarning" :icon="['fas', 'triangle-exclamation']" />
+                    <font-awesome-icon v-if="isSuccess" :icon="['fas', 'cicrle-check']" />
+                    <slot name="title"></slot>
+                    <font-awesome-icon v-if="isWarning" :icon="['fas', 'triangle-exclamation']" />
+                    <font-awesome-icon v-if="isSuccess" :icon="['fas', 'cicrle-check']" />
+                </h4>
+                <p>Hai richiesto:</p>
+                <p>{{ props.item.item_details.brand }} {{ props.item.item_details.model }} [{{ props.item.id }}]</p>
                 <hr>
                 <p>L'auto sarà a tua disposizione
                     dal {{ fromDate.toLocaleDateString('it-IT') }}
