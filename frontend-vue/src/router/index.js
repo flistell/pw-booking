@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Ping from '../components/Ping.vue'
-import Item from '../views/ItemView.vue'
+import ItemView from '../views/ItemView.vue'
 import HomeView from '../views/HomeView.vue'
 import BookingWizard from '@/views/BookingWizard.vue'
 import LoginView from '@/views/LoginView.vue'
@@ -32,8 +32,8 @@ export const router = createRouter({
     },
     {
        path: '/items/:id?',
-       name: 'Item',
-       component: Item
+       name: 'ItemView',
+       component: ItemView
     },
     {
       path: '/ping',

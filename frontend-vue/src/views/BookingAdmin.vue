@@ -6,8 +6,7 @@ import axios from 'axios';
 import ConfirmDialog from '@/components/ConfirmDialog.vue';
 import BookingRow from '@/components/BookingRow.vue';
 
-// Object properties and dynamic
-
+// Object properties and dynamic objects
 const router = useRouter()
 const bookings = ref({
     item_details: {
@@ -20,7 +19,6 @@ const dialogSlotProp = ref()
 const confirmModal = ref(null)
 
 // Functions
-
 const getBookings = () => {
     const url = `${settings.resourcesUrl}/bookings`
     axios.get(
@@ -33,7 +31,7 @@ const getBookings = () => {
         })
         .catch((error) => {
             console.error(error);
-            if (error.status == 403) {
+            if (error.status == 401) {
                 router.push({
                     path: '/logout'
                 })  
@@ -84,7 +82,7 @@ const cancelConfirmed = () => {
         .catch((error) => {
             confirmModal.value.closeModal()
             console.error(error);
-            if (error.status == 403) {
+            if (error.status == 401) {
                 router.push({
                     path: '/logout'
                 })
@@ -96,20 +94,10 @@ const cancelConfirmed = () => {
         })
 }
 
-function showModal() {
-    console.log('showModal', confirmModal.value)
-    confirmModal.value.showModal();
-}
-
-
-
 // Hooks
-
-onMounted(async () => { await getBookings() })
-
-console.log(ConfirmDialog)
-
+onMounted(async () => { getBookings() })
 </script>
+
 <template>
     <!-- BEGIN views/BookingAdmin -->
     <div class="d-flex">

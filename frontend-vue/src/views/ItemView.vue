@@ -1,8 +1,6 @@
 <script setup>
 import Datepicker from 'vue3-datepicker'
 import { ref } from 'vue'
-//const date_from = defineModel('date_from', { default: new Date()})
-//const date_to = defineModel('date_to', { default: new Date()})
 const today = ref(new Date());
 </script>
 
@@ -85,7 +83,6 @@ const today = ref(new Date());
                                 :lowerLimit="date_from" />
                         </fieldset>
                         <hr>
-
                         <div id="book_action" class="d-flex justify-content-between">
                             <button type="button" class="btn btn-primary" @click="book_it()">
                                 Prenota ora
@@ -101,6 +98,7 @@ const today = ref(new Date());
 
 <script>
 import axios from 'axios';
+import { settings } from '@/assets/data/settings.js'
 
 export default {
     data() {
@@ -117,7 +115,7 @@ export default {
         getItem() {
             const id = this.$route.params.id;
             console.log("getItem(" + id + ")")
-            const url = 'http://localhost:5000/resources/items/' + id;
+            const url = settings.backendUrl + `/resources/items/` + id;
             axios
                 .get(url)
                 .then((response) => {

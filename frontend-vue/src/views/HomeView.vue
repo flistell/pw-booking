@@ -2,11 +2,12 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import ItemCard from "../components/ItemCard.vue";
+import { settings } from '@/assets/data/settings.js'
 
 const items = ref([])
 
 const getItems = () => {
-    const path = 'http://localhost:5000/resources/items'
+    const path = `${settings.backendUrl}/resources/items`
     axios.get(path)
         .then((res) => {
             items.value = res.data;

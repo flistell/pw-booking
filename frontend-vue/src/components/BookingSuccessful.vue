@@ -6,7 +6,8 @@ const props = defineProps({
     booking_id: Number,
     booking_from: String,
     booking_to: String,
-    status: String
+    status: String,
+    title: String
 })
 
 const fromDate = new Date()
@@ -43,13 +44,13 @@ if (props.status == 'success'){
             <div class="col-8">
                 <h4 class="text-center">
                     <font-awesome-icon v-if="isWarning" :icon="['fas', 'triangle-exclamation']" />
-                    <font-awesome-icon v-if="isSuccess" :icon="['fas', 'cicrle-check']" />
-                    <slot name="title"></slot>
+                    <font-awesome-icon v-if="isSuccess" :icon="['fas', 'circle-check']" />
+                    {{ props.title }}
                     <font-awesome-icon v-if="isWarning" :icon="['fas', 'triangle-exclamation']" />
-                    <font-awesome-icon v-if="isSuccess" :icon="['fas', 'cicrle-check']" />
+                    <font-awesome-icon v-if="isSuccess" :icon="['fas', 'circle-check']" />
                 </h4>
-                <p>Hai richiesto:</p>
-                <p>{{ props.item.item_details.brand }} {{ props.item.item_details.model }} [{{ props.item.id }}]</p>
+                <p>Hai richiesto:
+                {{ props.item.item_details.brand }} {{ props.item.item_details.model }} [{{ props.item.id }}]</p>
                 <hr>
                 <p>L'auto sarà a tua disposizione
                     dal {{ fromDate.toLocaleDateString('it-IT') }}

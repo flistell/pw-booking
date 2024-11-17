@@ -187,8 +187,9 @@ onMounted(() => {
             </div>
             <div class="card col-lg-8">
                 <BookingSuccessful v-if="onSuccesForm" :item="item" :booking_id="booking_id" :booking_from="fromDateNew"
-                    :booking_to="toDateNew" :status="'success'">
-                    <template v-slot:title>Modifica avvenuta con successo</template>
+                    :booking_to="toDateNew" :status="'success'"
+                    title="Modifica avvenuta con successo"
+                    >
                     <template v-slot:message>
                         Ritorna a <a href="/bookings" class="alert-link">"Gestiti prenotazioni"</a>.
                     </template>

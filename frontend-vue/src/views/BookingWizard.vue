@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import { useRouter } from 'vue-router';
 import { settings } from '@/assets/data/settings.js';
 import BookingUserForm from '@/components/BookingUserForm.vue';
 import ItemCardSmall from '@/components/ItemCardSmall.vue';
@@ -9,9 +10,9 @@ import ErrorForm from '@/components/ErrorForm.vue';
 import { storeToRefs } from 'pinia';
 import { myAuthStore } from '@/stores/authUserStore'
 
+const router = useRouter();
 const authUserStore = myAuthStore();
 const { user } = storeToRefs(authUserStore);
-
 
 const props = defineProps({
     id: String,
@@ -32,7 +33,7 @@ const item = ref({
 const onUserForm = ref(true)
 const onConfirmForm = ref(false)
 const onProcessingForm = ref(false)
-const onSuccesForm = ref(false)
+const onSuccessForm = ref(false)
 const onErrorForm = ref(false)
 const errorMessage = ref(null)
 const booking_id = ref(-1)
@@ -67,12 +68,9 @@ const resetForms = () => {
     onUserForm.value = false
     onConfirmForm.value = false
     onProcessingForm.value = false
-    onSuccesForm.value = false
+    onSuccessForm.value = false
     onErrorForm.value = false
 }
-
-
-const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
 
 const initBooking = () => {
     console.log("initBooking")
@@ -101,9 +99,15 @@ const initBooking = () => {
         .catch((error) => {
             console.error("Booking", error);
             // alert(error)
-            resetForms();
-            onErrorForm.value = true;
-            errorMessage.value = error.response.data;
+            if (error.status == 401) {
+                router.push({
+                    path: '/logout'
+                })
+            } else {
+                resetForms();
+                onErrorForm.value = true;
+                errorMessage.value = error.response.data;
+            }
         })
 }
 
@@ -124,7 +128,7 @@ const confirmBooking = () => {
         .then((response) => {
             console.log("Booking confirm: ", response)
             resetForms()
-            onSuccesForm.value = true
+            onSuccessForm.value = true
             console.log('BookingDetailForm booked: ', booking_confirmation_id)
         })
         .catch((error) => {
@@ -169,17 +173,20 @@ onMounted(() => {getItemDetails()})
                         :booking_id="booking_id"
                         :booking_from="props.from" 
                         :booking_to="props.to"
-                        :status="'warning'">
-                        Conferma la tua prenotazione
-                    </BookingSuccessful>
+                        :status="'warning'"
+                        title="Conferma la tua prenotazione"
+                    />
 
-                    <BookingSuccessful v-if="onSuccesForm" 
+                    <BookingSuccessful v-if="onSuccessForm" 
                         :item="item" 
                         :booking_id="booking_id"
                         :booking_from="props.from" 
                         :booking_to="props.to"
-                        :status="'success'">
-                        La tua prenotazione è andata a buon fine.
+                        :status="'success'"
+                        title="Tutto OK">
+                        <template v-slot:message>
+                            La tua prenotazione è andata a buon fine.
+                        </template>
                     </BookingSuccessful>
 
                     <ErrorForm v-if="onErrorForm" :message="errorMessage">
@@ -189,13 +196,11 @@ onMounted(() => {getItemDetails()})
                     <div id="button_row" class="btn-group" role="group">
                         <button v-if="onUserForm" id="cancel-booking" type="button" class="btn btn-secondary btn-md"
                             @click="cancelBooking()">Annulla</button>
-                        <button v-if="onUserForm" id="to-payment" type="button" class="btn btn-primary"
+                        <button v-if="onUserForm" id="to-confirm" type="button" class="btn btn-primary"
                             @click="initBooking()">Continua</button>
                         <button v-if="onConfirmForm" id="to-payment" type="button" class="btn btn-success"
                             @click="confirmBooking()">Conferma</button>
                     </div>
-
-
                 </div><!-- bw_form_card -->
             </div><!-- bw_col2 -->
         </div><!-- bw_row -->
