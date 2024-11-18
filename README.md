@@ -1,5 +1,7 @@
 # SocialAuto - Booking App
 
+[Demo site](http://socialauto.ddns.net) on Oracle Cloud Free Tier VM
+
 ## Installation
 
 Clone the repo:
@@ -43,4 +45,3 @@ Run the frontend in dev mode:
 $ cd pw-booking/frontend-vue
 $ npm run dev --debug
 ```
-
