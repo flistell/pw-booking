@@ -39,7 +39,7 @@ def login_jwt():
         'mail_address': user.get('mail_address')
         #'token': token 
         })
-    response.set_cookie("Authorization", value=token, domain="localhost")
+    response.set_cookie("Authorization", value=token, domain=current_app.config.get('COOKIE_DOMAIN'))
     logger.debug("response:" + repr(response))
     return response
 

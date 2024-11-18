@@ -1,9 +1,9 @@
 import os
+import logging
 from flask import Flask, request, send_from_directory
 from flask_cors import CORS
+from werkzeug.middleware.proxy_fix import ProxyFix
 from rich.logging import RichHandler
-import logging
-
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
@@ -13,14 +13,16 @@ logging.basicConfig(
     )
 
 
-DBFILE = '/home/fl118890/Workspace/code/pegaso-labs/project-work/pw-booking/db/booking.sqlite'
-
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
+    app.wsgi_app = ProxyFix(
+        app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
+    )
     app.config.from_mapping(
         SECRET_KEY='dev',
         JWT_ALG='HS256',
-        DATABASE=os.path.join(DBFILE)
+        DATABASE=os.path.join(os.environ.get('DBFILE','../db/booking.sqlite')),
+        DOMAIN=os.environ.get('COOKIE_DOMAIN', 'localhost')
     )
     
     if test_config is None:
@@ -34,11 +36,11 @@ def create_app(test_config=None):
         pass
 
     cors = CORS(app, resources={
-        r"/resources/*": {"origins": ["http://localhost:5173", "http://localhost:8000"]},
-        r"/resources/*/*": {"origins": ["http://localhost:5173", "http://localhost:8000"]},
-        r"/catalog/*": {"origins": ["http://localhost:5173", "http://localhost:8000"]},
-        r"/ping/*": {"origins": ["http://localhost:5173", "http://localhost:8000"]},
-        r"/login/*": {"origins": ["http://localhost:5173", "http://localhost:8000"]},
+        r"/resources/*": {"origins": ["http://localhost:5173", "http://localhost:8000", "http://socialauto.ddns.net"]},
+        r"/resources/*/*": {"origins": ["http://localhost:5173", "http://localhost:8000", "http://socialauto.ddns.net"]},
+        r"/catalog/*": {"origins": ["http://localhost:5173", "http://localhost:8000", "http://socialauto.ddns.net"]},
+        r"/ping/*": {"origins": ["http://localhost:5173", "http://localhost:8000", "http://socialauto.ddns.net"]},
+        r"/login/*": {"origins": ["http://localhost:5173", "http://localhost:8000", "http://socialauto.ddns.net"]},
         },
         supports_credentials=True)
     
