@@ -1,6 +1,6 @@
 # SocialAuto - Booking App
 
-[Demo site](http://socialauto.ddns.net) on Oracle Cloud Free Tier VM
+[Demo site](http://socialauto.ddns.net) on Oracle Cloud Free Tier VM. (Runs in production mode with Apache Httpd and Gunicorn).
 
 ## Installation
 
